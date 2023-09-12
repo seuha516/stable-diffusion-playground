@@ -1,0 +1,12 @@
+.Container {
+  display: flex;
+  gap: 1.5rem;
+
+  .InputWrapper {
+    width: 40%;
+  }
+
+  .OutputWrapper {
+    width: 60%;
+  }
+}
