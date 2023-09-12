@@ -5,10 +5,17 @@ import TextAreaItem from "../../../component/input/items/textarea-item/textarea-
 import SelectItem from "../../../component/input/items/select-item/select-item";
 import SliderItem from "../../../component/input/items/slider-item/slider-item";
 import SeedItem from "../../../component/input/items/seed-item/seed-item";
+import ImageItem from "../../../component/input/items/image-item/image-item";
 
 export default function InputWrapper({ input, setInput }: InputWrapperProps) {
   return (
     <div className={classes.Container}>
+      <ImageItem
+        title="image"
+        value={input.image}
+        onChange={(image) => setInput({ ...input, image })}
+      />
+
       <TextAreaItem
         title="prompt"
         value={input.prompt}
