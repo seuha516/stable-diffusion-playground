@@ -11,7 +11,7 @@ export type Txt2imgInputType = {
 };
 
 export type Img2imgInputType = {
-  image: File;
+  image: File | null;
   prompt: string;
   negative_prompt: string;
   strength: number;
