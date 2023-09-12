@@ -44,18 +44,29 @@ export default function InputWrapper({ input, setInput }: InputWrapperProps) {
         title="batch_size"
         value={input.batch_size}
         onChange={(batch_size) => setInput({ ...input, batch_size })}
+        min={1}
+        max={4}
+        step={1}
+        isInteger={true}
       />
 
       <SliderItem
         title="denoising_steps"
         value={input.denoising_steps}
         onChange={(denoising_steps) => setInput({ ...input, denoising_steps })}
+        min={1}
+        max={500}
+        step={1}
+        isInteger={true}
       />
 
       <SliderItem
         title="guidance_scale"
         value={input.guidance_scale}
         onChange={(guidance_scale) => setInput({ ...input, guidance_scale })}
+        min={1}
+        max={20}
+        step={0.01}
       />
 
       <SelectItem<Scheduler>

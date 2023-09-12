@@ -1,11 +1,17 @@
 import { Input } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { SeedItemProps } from "./model";
 import ItemWrapper from "../item-wrapper";
 
 export default function SeedItem({ title, value, onChange }: SeedItemProps) {
   const [input, setInput] = useState<string>((value ?? "").toString());
+
+  useEffect(() => {
+    if ((input === "" ? undefined : Number(input)) !== value) {
+      setInput((value ?? "").toString());
+    }
+  }, [value]);
 
   return (
     <ItemWrapper title={title}>

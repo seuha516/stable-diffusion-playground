@@ -1,5 +1,5 @@
 import { Input, Slider } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { SliderItemProps } from "./model";
 import classes from "./slider-item.module.scss";
@@ -25,6 +25,10 @@ export default function SliderItem({
   isInteger,
 }: SliderItemProps) {
   const [input, setInput] = useState<string>(value.toString());
+
+  useEffect(() => {
+    setInput(value.toString());
+  }, [value]);
 
   const onSubmitOrBlur = () => {
     const number = Number(input);
