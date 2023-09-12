@@ -9,5 +9,9 @@ body {
   * {
     box-sizing: border-box;
     font-family: "Roboto Flex", Roboto, Inter, sans-serif;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
