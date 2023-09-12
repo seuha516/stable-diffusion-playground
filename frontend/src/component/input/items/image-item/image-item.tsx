@@ -4,13 +4,17 @@ import classes from "./image-item.module.scss";
 import { ImageItemProps } from "./model";
 import ItemWrapper from "../item-wrapper";
 
-const getBase64 = (file: File): Promise<string> =>
+const getBase64 = (file: File | null): Promise<string | null> =>
   new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
 
-    reader.addEventListener("load", () => resolve(reader.result as string));
-    reader.addEventListener("load", (error) => reject(error));
+      reader.addEventListener("load", () => resolve(reader.result as string));
+      reader.addEventListener("load", (error) => reject(error));
+    } else {
+      resolve(null);
+    }
   });
 
 export default function ImageItem({ title, value, onChange }: ImageItemProps) {
@@ -19,8 +23,7 @@ export default function ImageItem({ title, value, onChange }: ImageItemProps) {
 
   useEffect(() => {
     const setSrc = async (file: File | null) => {
-      const src = file ? await getBase64(file) : null;
-      setImageSrc(src);
+      setImageSrc(await getBase64(file));
     };
 
     setSrc(value);
