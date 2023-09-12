@@ -1,0 +1,25 @@
+.Container {
+  display: flex;
+  flex-direction: column;
+
+  .Title {
+    padding: 1.5rem 2rem;
+    font-size: 1.5rem;
+    font-family: "Roboto Flex";
+    font-weight: 700;
+    color: #243b53;
+    border-bottom: 0.0625rem solid gray;
+    margin-bottom: -2.875rem;
+  }
+
+  .Tabs {
+    :global(.ant-tabs-nav-wrap) {
+      flex-direction: row-reverse;
+      padding: 0 2rem;
+    }
+
+    :global(.ant-tabs-content-holder) {
+      padding: 1rem 2rem 5rem;
+    }
+  }
+}
