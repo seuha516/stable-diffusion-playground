@@ -7,7 +7,7 @@ export type Txt2imgInputType = {
   denoising_steps: number;
   guidance_scale: number;
   scheduler: Scheduler;
-  seed?: string;
+  seed?: number;
 };
 
 export type Img2imgInputType = {
@@ -30,3 +30,20 @@ export type UpscalingInputType = {
 export type ImageSize = 512 | 768 | 1024;
 export type Scheduler = "Scheduler1" | "Scheduler2" | "Scheduler3";
 export type UpscalingScale = 2 | 4;
+
+export const imageSizeOptions: { value: ImageSize }[] = [
+  { value: 512 },
+  { value: 768 },
+  { value: 1024 },
+];
+
+export const schedulerOptions: { value: Scheduler }[] = [
+  { value: "Scheduler1" },
+  { value: "Scheduler2" },
+  { value: "Scheduler3" },
+];
+
+export const upscalingScaleOptions: { value: UpscalingScale }[] = [
+  { value: 2 },
+  { value: 4 },
+];

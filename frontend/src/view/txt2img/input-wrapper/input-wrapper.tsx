@@ -1,9 +1,15 @@
 import classes from "./input-wrapper.module.scss";
 import { InputWrapperProps } from "./model";
-import { ImageSize, Scheduler } from "../../model";
+import {
+  ImageSize,
+  Scheduler,
+  imageSizeOptions,
+  schedulerOptions,
+} from "../../model";
 import TextAreaItem from "../../../component/input/items/textarea-item/textarea-item";
 import SelectItem from "../../../component/input/items/select-item/select-item";
 import SliderItem from "../../../component/input/items/slider-item/slider-item";
+import SeedItem from "../../../component/input/items/seed-item/seed-item";
 
 export default function InputWrapper({ input, setInput }: InputWrapperProps) {
   return (
@@ -24,12 +30,14 @@ export default function InputWrapper({ input, setInput }: InputWrapperProps) {
         title="width"
         value={input.width}
         onChange={(width) => setInput({ ...input, width })}
+        options={imageSizeOptions}
       />
 
       <SelectItem<ImageSize>
         title="height"
         value={input.height}
         onChange={(height) => setInput({ ...input, height })}
+        options={imageSizeOptions}
       />
 
       <SliderItem
@@ -54,6 +62,13 @@ export default function InputWrapper({ input, setInput }: InputWrapperProps) {
         title="scheduler"
         value={input.scheduler}
         onChange={(scheduler) => setInput({ ...input, scheduler })}
+        options={schedulerOptions}
+      />
+
+      <SeedItem
+        title="seed"
+        value={input.seed}
+        onChange={(seed) => setInput({ ...input, seed })}
       />
     </div>
   );
