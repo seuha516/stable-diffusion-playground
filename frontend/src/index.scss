@@ -1,0 +1,13 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  direction: initial;
+
+  * {
+    box-sizing: border-box;
+    font-family: "Roboto Flex", Roboto, Inter, sans-serif;
+  }
+}
