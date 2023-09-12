@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Txt2imgInputType } from "../model";
 import classes from "./txt2img.module.scss";
 import InputWrapper from "./input-wrapper/input-wrapper";
+import { Button } from "antd";
 
 const initialInput: Txt2imgInputType = {
   prompt: "",
@@ -23,6 +24,10 @@ export default function Txt2img() {
     <div className={classes.Container}>
       <div className={classes.InputWrapper}>
         <InputWrapper input={input} setInput={setInput} />
+
+        <Button type="primary" onClick={() => console.log(input)}>
+          Submit
+        </Button>
       </div>
 
       <div className={classes.OutputWrapper}>OutputWrapper</div>
