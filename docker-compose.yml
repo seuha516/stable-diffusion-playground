@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  frontend:
+    restart: always
+    command: yarn start
+    container_name: frontend
+    build:
+      context: /frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
