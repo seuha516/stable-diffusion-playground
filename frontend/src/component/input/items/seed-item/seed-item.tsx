@@ -1,10 +1,14 @@
 import { Input } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import type { SeedItemProps } from "./model";
 import ItemWrapper from "../item-wrapper";
+import { Context } from "../../../../view/const";
 
 export default function SeedItem({ title, value, onChange }: SeedItemProps) {
+  const { output } = useContext(Context);
+  const disabled = output.process !== null;
+
   const [input, setInput] = useState<string>((value ?? "").toString());
 
   useEffect(() => {
@@ -23,6 +27,7 @@ export default function SeedItem({ title, value, onChange }: SeedItemProps) {
           setInput(newInput);
           onChange(newInput === "" ? undefined : Number(newInput));
         }}
+        disabled={disabled}
       />
     </ItemWrapper>
   );

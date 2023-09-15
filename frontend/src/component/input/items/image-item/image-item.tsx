@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef, ChangeEvent } from "react";
+import { useEffect, useState, useRef, ChangeEvent, useContext } from "react";
 
 import classes from "./image-item.module.scss";
 import { ImageItemProps } from "./model";
 import ItemWrapper from "../item-wrapper";
+import { Context } from "../../../../view/const";
 
-const getBase64 = (file: File | null): Promise<string | null> =>
+const getBase64 = (file?: File): Promise<string | null> =>
   new Promise((resolve, reject) => {
     if (file) {
       const reader = new FileReader();
@@ -18,11 +19,14 @@ const getBase64 = (file: File | null): Promise<string | null> =>
   });
 
 export default function ImageItem({ title, value, onChange }: ImageItemProps) {
+  const { output } = useContext(Context);
+  const disabled = output.process !== null;
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    const setSrc = async (file: File | null) => {
+    const setSrc = async (file?: File) => {
       setImageSrc(await getBase64(file));
     };
 
@@ -33,6 +37,8 @@ export default function ImageItem({ title, value, onChange }: ImageItemProps) {
     if (!e.target.files) return;
 
     const file = e.target.files[0];
+    if (!file) return;
+
     const src = await getBase64(file);
 
     onChange(file);
@@ -41,17 +47,20 @@ export default function ImageItem({ title, value, onChange }: ImageItemProps) {
 
   return (
     <ItemWrapper title={title}>
-      <button
-        className={classes.UploadButton}
-        type="button"
-        onClick={() => inputRef.current?.click()}
+      <div
+        className={`${classes.UploadButton} ${
+          disabled ? classes.Disabled : ""
+        }`}
+        onClick={() => {
+          if (!disabled) inputRef.current?.click();
+        }}
       >
         {imageSrc ? (
-          <img alt="input-image" className={classes.Image} src={imageSrc} />
+          <img className={classes.Image} src={imageSrc} />
         ) : (
-          <span>Upload image</span>
+          <span className={classes.UploadText}>Upload image</span>
         )}
-      </button>
+      </div>
 
       <input
         ref={inputRef}

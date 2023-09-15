@@ -1,9 +1,10 @@
 import { Input, Slider } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import type { SliderItemProps } from "./model";
 import classes from "./slider-item.module.scss";
 import ItemWrapper from "../item-wrapper";
+import { Context } from "../../../../view/const";
 
 const clamp = (
   target: number,
@@ -24,6 +25,9 @@ export default function SliderItem({
   step,
   isInteger,
 }: SliderItemProps) {
+  const { output } = useContext(Context);
+  const disabled = output.process !== null;
+
   const [input, setInput] = useState<string>(value.toString());
 
   useEffect(() => {
@@ -60,6 +64,7 @@ export default function SliderItem({
               onSubmitOrBlur();
             }
           }}
+          disabled={disabled}
         />
 
         <Slider
@@ -69,6 +74,7 @@ export default function SliderItem({
           step={step}
           value={value}
           onChange={onChange}
+          disabled={disabled}
         />
       </div>
     </ItemWrapper>
