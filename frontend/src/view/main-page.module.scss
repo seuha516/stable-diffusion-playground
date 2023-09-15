@@ -12,14 +12,29 @@
     margin-bottom: -2.875rem;
   }
 
-  .Tabs {
-    :global(.ant-tabs-nav-wrap) {
-      flex-direction: row-reverse;
-      padding: 0 2rem;
+  .Tabs :global(.ant-tabs-nav-wrap) {
+    flex-direction: row-reverse;
+    padding: 0 2rem;
+  }
+
+  .ContentWrapper {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 2rem 5rem;
+
+    .InputWrapper {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .GenerateButton {
+        height: 3rem;
+      }
     }
 
-    :global(.ant-tabs-content-holder) {
-      padding: 1rem 2rem 5rem;
+    .OutputWrapper {
+      width: 60%;
     }
   }
 }
