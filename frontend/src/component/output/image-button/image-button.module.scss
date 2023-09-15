@@ -1,0 +1,31 @@
+.Image {
+  width: 100%;
+
+  &.Clickable {
+    cursor: pointer;
+    transition: opacity 0.15s linear;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.ImageWrapper {
+  position: relative;
+  width: 100%;
+
+  &::after {
+    display: block;
+    content: "";
+    padding-bottom: 100%;
+  }
+
+  .Image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    object-fit: cover;
+  }
+}
