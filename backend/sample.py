@@ -16,5 +16,5 @@ outs = predict(
         apply_watermark=False,
     )
 print(len(outs))
-for i in range(outs):
-    outs[i].save("result"+str(i)+"png", "PNG")
+for i in range(len(outs)):
+    outs[i].save("result"+str(i)+".png", "PNG")
