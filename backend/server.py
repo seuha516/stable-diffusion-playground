@@ -1,10 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from diffusers import DiffusionPipeline
 import datetime
 import torch
 import storage
 
 app = Flask(__name__)
+
+
+@app.route('/images/<image_filename>', methods=['GET'])
+def get_images(image_filename):
+    try:
+        return send_from_directory('storage', image_filename)
+    except Exception as e:
+        return str(e)
+
 
 @app.route('/v1/predictions', methods=['POST'])
 def predictions():
@@ -38,6 +47,7 @@ def predictions():
     # Upload the image to Google Cloud Storage
     # TODO: Replace the bucket name with environment variable
     image_name = prompt + "-" + str(datetime.datetime.now())
+    generated_image.save("/storage/"+image_name, "PNG")
     gcs_uri = storage.upload_to_gcs(generated_image, "BUCKET_NAME", image_name)
 
     output = [
@@ -45,6 +55,7 @@ def predictions():
     ]
 
     return jsonify(output)
+
 
 if __name__ == '__main__':
     app.run(debug=True, ssl_context='adhoc')  # ssl_context is added for HTTPS
