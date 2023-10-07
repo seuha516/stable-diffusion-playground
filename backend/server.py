@@ -28,14 +28,9 @@ def predictions():
     # Here, you would typically process the image and other inputs to generate the output.
     # For demonstration, we are just returning the inputs as JSON.
 
-    output = {
-        "type": "array",
-        "items": {
-            "type": "string",
-            "format": "uri"
-        },
-        "title": "Output"
-    }
+    output = [
+        'https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI'
+    ]
 
     return jsonify(output)
 
