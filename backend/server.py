@@ -1,4 +1,8 @@
 from flask import Flask, request, jsonify
+from diffusers import DiffusionPipeline
+import datetime
+import torch
+import storage
 import config
 
 app = Flask(__name__)
@@ -30,15 +34,18 @@ def predictions():
 
     # Here, you would typically process the image and other inputs to generate the output.
     # For demonstration, we are just returning the inputs as JSON.
+    pipeline = DiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16)
+    pipeline.to("cuda")
+    generated_image = pipeline("An image of a squirrel in Picasso style").images[0]
 
-    output = {
-        "type": "array",
-        "items": {
-            "type": "string",
-            "format": "uri"
-        },
-        "title": "Output"
-    }
+    # Upload the image to Google Cloud Storage
+    # TODO: Replace the bucket name with environment variable
+    image_name = prompt + "-" + str(datetime.datetime.now())
+    gcs_uri = storage.upload_to_gcs(generated_image, "BUCKET_NAME", image_name)
+
+    output = [
+        gcs_uri
+    ]
 
     return jsonify(output)
 
