@@ -1,5 +1,5 @@
 export interface LoadingProps {
   current: number;
-  denoising_steps: number;
-  batch_size: number;
+  num_inference_steps: number;
+  num_outputs: number;
 }

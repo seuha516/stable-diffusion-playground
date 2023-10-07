@@ -7,7 +7,7 @@ import SimilarImages from "../../component/output/similar-images/similar-images"
 
 export default function OutputWrapper() {
   const {
-    input: { denoising_steps, batch_size },
+    input: { num_inference_steps, num_outputs },
     output: { images, similarImages, process },
   } = useContext(Context);
 
@@ -34,8 +34,8 @@ export default function OutputWrapper() {
       {process !== null && (
         <Loading
           current={process}
-          denoising_steps={denoising_steps}
-          batch_size={batch_size}
+          num_inference_steps={num_inference_steps}
+          num_outputs={num_outputs}
         />
       )}
 

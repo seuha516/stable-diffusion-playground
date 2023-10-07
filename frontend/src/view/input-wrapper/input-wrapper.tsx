@@ -49,9 +49,11 @@ export default function InputWrapper() {
 
       {mode === "img2img" && (
         <SliderItem
-          title="strength"
-          value={input.strength ?? 0.8}
-          onChange={(strength) => setInput({ ...input, strength })}
+          title="prompt_strength"
+          value={input.prompt_strength ?? 0.8}
+          onChange={(prompt_strength) =>
+            setInput({ ...input, prompt_strength })
+          }
           min={0}
           max={1}
           step={0.01}
@@ -59,9 +61,9 @@ export default function InputWrapper() {
       )}
 
       <SliderItem
-        title="batch_size"
-        value={input.batch_size}
-        onChange={(batch_size) => setInput({ ...input, batch_size })}
+        title="num_outputs"
+        value={input.num_outputs}
+        onChange={(num_outputs) => setInput({ ...input, num_outputs })}
         min={1}
         max={4}
         step={1}
@@ -69,9 +71,11 @@ export default function InputWrapper() {
       />
 
       <SliderItem
-        title="denoising_steps"
-        value={input.denoising_steps}
-        onChange={(denoising_steps) => setInput({ ...input, denoising_steps })}
+        title="num_inference_steps"
+        value={input.num_inference_steps}
+        onChange={(num_inference_steps) =>
+          setInput({ ...input, num_inference_steps })
+        }
         min={1}
         max={500}
         step={1}

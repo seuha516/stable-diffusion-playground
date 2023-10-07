@@ -25,15 +25,15 @@ export type InputType = {
   negative_prompt: string;
   width: ImageSize;
   height: ImageSize;
-  batch_size: number;
-  denoising_steps: number;
+  num_outputs: number;
+  num_inference_steps: number;
   guidance_scale: number;
   scheduler: Scheduler;
   seed?: number;
 
   // for img2img generate
   image?: File;
-  strength?: number;
+  prompt_strength?: number;
 };
 
 export type OutputType = {

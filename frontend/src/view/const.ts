@@ -12,15 +12,15 @@ export const initialInput: InputType = {
   negative_prompt: "",
   width: 512,
   height: 512,
-  batch_size: 1,
-  denoising_steps: 20,
+  num_outputs: 1,
+  num_inference_steps: 20,
   guidance_scale: 7.5,
   scheduler: "DDIM",
   seed: undefined,
 
   // for img2img generate
   image: undefined,
-  strength: 0.8,
+  prompt_strength: 0.8,
 };
 
 export const initialOutput: OutputType = {

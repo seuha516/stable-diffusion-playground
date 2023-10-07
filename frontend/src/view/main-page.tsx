@@ -1,4 +1,5 @@
 import { Button, Tabs } from "antd";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { Context, initialInput, initialOutput } from "./const";
@@ -6,12 +7,6 @@ import InputWrapper from "./input-wrapper/input-wrapper";
 import classes from "./main-page.module.scss";
 import { InputType, Mode, OutputType } from "./model";
 import OutputWrapper from "./output-wrapper/output-wrapper";
-
-import test1 from "../test-image/test1.png";
-import test2 from "../test-image/test2.png";
-import test3 from "../test-image/test3.png";
-import test4 from "../test-image/test4.png";
-import test5 from "../test-image/test5.png";
 
 function MainPage() {
   const [mode, setMode] = useState<Mode>("txt2img");
@@ -24,50 +19,33 @@ function MainPage() {
     setOutput(initialOutput);
   }, [mode]);
 
-  const generate = () => {
-    const requestBody =
+  const generate = async () => {
+    const formData = new FormData();
+    const jsonData =
       mode === "txt2img"
-        ? input
-        : { ...input, image: undefined, strength: undefined };
+        ? { ...input, image: undefined, prompt_strength: undefined }
+        : { ...input, image: undefined };
 
-    // TODO: send request to backend
-    console.log(requestBody);
+    if (input.image) {
+      formData.append("image", input.image);
+    }
+
+    formData.append("data", JSON.stringify(jsonData));
 
     window.scrollTo(0, 0);
     setOutput({ ...initialOutput, process: 0 });
 
-    // FIXME: replace this after backend is ready
-    setTimeout(() => {
-      setOutput({ images: [test1, test1], similarImages: null, process: 100 });
-      setTimeout(() => {
-        setOutput({
-          images: [test2, test1, test1],
-          similarImages: null,
-          process: 200,
-        });
-        setTimeout(() => {
-          setOutput({
-            images: [test3, test2, test3],
-            similarImages: null,
-            process: 300,
-          });
-          setTimeout(() => {
-            setOutput({
-              images: [test3, test3, test3],
-              similarImages: null,
-              process: 400,
-            });
-            setTimeout(() => {
-              setOutput({
-                images: [test3, test3, test3],
-                similarImages: [test4, test5, test4, test5],
-                process: null,
-              });
-            }, 1000);
-          }, 1000);
-        }, 1000);
-      }, 1000);
-    }, 1000);
+    const response = await axios.post(
+      "http://localhost:5000/v1/predictions",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    setOutput({
+      images: response.data as string[],
+      similarImages: [],
+      process: null,
+    });
   };
 
   return (

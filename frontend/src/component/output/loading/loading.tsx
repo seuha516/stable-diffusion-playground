@@ -5,8 +5,8 @@ import classes from "./loading.module.scss";
 
 export default function Loading({
   current,
-  denoising_steps,
-  batch_size,
+  num_inference_steps,
+  num_outputs,
 }: LoadingProps) {
   return (
     <div className={classes.Container}>
@@ -14,12 +14,12 @@ export default function Loading({
 
       <span className={classes.LoadingText}>Loading...</span>
 
-      <span>{`${current} / ${denoising_steps * batch_size}`}</span>
+      <span>{`${current} / ${num_inference_steps * num_outputs}`}</span>
 
-      {batch_size > 1 && (
+      {num_outputs > 1 && (
         <span
           className={classes.StepCalculation}
-        >{`(${denoising_steps}x${batch_size})`}</span>
+        >{`(${num_inference_steps}x${num_outputs})`}</span>
       )}
 
       <span className={classes.StepsText}>steps</span>
