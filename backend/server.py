@@ -3,8 +3,11 @@ from diffusers import DiffusionPipeline
 import datetime
 import torch
 import storage
+import config
 
 app = Flask(__name__)
+app.config.from_object(config.LocalConfig)
+
 
 
 @app.route('/images/<image_filename>', methods=['GET'])
@@ -58,5 +61,5 @@ def predictions():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context='adhoc')  # ssl_context is added for HTTPS
+    app.run(ssl_context='adhoc')  # ssl_context is added for HTTPS
 
