@@ -1,5 +1,3 @@
-from diffusers import DiffusionPipeline
-import torch
 from predict import predict
 
 outs = predict(

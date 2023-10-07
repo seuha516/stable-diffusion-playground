@@ -20,7 +20,7 @@ class KarrasDPM:
         return DPMSolverMultistepScheduler.from_config(config, use_karras_sigmas=True)
 
 
-device = "cuda"
+device = "cpu"
 
 SCHEDULERS = {
     "DDIM": DDIMScheduler,
@@ -34,9 +34,9 @@ SCHEDULERS = {
 
 TXT2IMG_PIPE = DiffusionPipeline.from_pretrained(
     "stabilityai/stable-diffusion-xl-base-1.0",
-    torch_dtype=torch.float16,
+    torch_dtype=torch.float32,
     use_safetensors=True,
-    variant="fp16",
+    variant="fp32",
 )
 TXT2IMG_PIPE.to(device)
 
