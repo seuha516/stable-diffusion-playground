@@ -85,7 +85,6 @@ def predict(
         args["image"] = image
         args["strength"] = prompt_strength
 
-    print('predict start')
     output = pipe(**args).images
 
     return output
