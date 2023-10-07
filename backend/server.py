@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from predict import predict
 from PIL import Image
+from predict import predict
 import datetime
 import json
 import storage
