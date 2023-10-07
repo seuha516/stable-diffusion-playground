@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
+import config
 
 app = Flask(__name__)
+app.config.from_object(config.LocalConfig)
+
 
 @app.route('/v1/predictions', methods=['POST'])
 def predictions():
@@ -39,6 +42,7 @@ def predictions():
 
     return jsonify(output)
 
+
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context='adhoc')  # ssl_context is added for HTTPS
+    app.run(ssl_context='adhoc')  # ssl_context is added for HTTPS
 
