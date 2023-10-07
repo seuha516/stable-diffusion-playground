@@ -75,8 +75,6 @@ def predict(
         "generator": generator,
         "prompt": [prompt] * num_outputs,
         "negative_prompt": [negative_prompt] * num_outputs,
-        "width": width,
-        "height": height,
         "num_inference_steps": num_inference_steps,
         "guidance_scale": guidance_scale,
     }
@@ -84,6 +82,9 @@ def predict(
     if image:
         args["image"] = image
         args["strength"] = prompt_strength
+    else:
+        args["width"] = width
+        args["height"] = height
 
     output = pipe(**args).images
 

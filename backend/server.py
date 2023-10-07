@@ -59,9 +59,14 @@ def predictions():
     # TODO: Replace the bucket name with environment variable
     gcs_uris = []
     for output_num, output in enumerate(outputs):
-        image_name = f'{str(datetime.datetime.now())}({output_num})'.replace(" ", "_")
-        output.save(f'/storage/{image_name}', "PNG")
-        gcs_uris.append(storage.upload_to_gcs(output, "BUCKET_NAME", image_name))
+        image_name = (
+            f'{str(datetime.datetime.now().isoformat())}({output_num})'
+            .replace(".", "_")
+            .replace(":", "_")
+            + ".png"
+        )
+        output.save(f'./storage/{image_name}', "PNG")
+        gcs_uris.append(f'http://localhost:5000/images/{image_name}')
 
     return jsonify(gcs_uris)
 
