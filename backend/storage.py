@@ -1,9 +1,9 @@
+import boto3
 import json
+import io
 import os
 from google.cloud import storage
 from PIL import Image
-import boto3
-import io
 
 # Initialize Google Cloud Storage client
 credentials_json = json.loads(os.environ.get("GCP_CREDENTIALS_JSON"))
@@ -11,6 +11,7 @@ storage_client = storage.Client.from_service_account_info(credentials_json)
 
 # Initialize AWS S3 client
 s3_client = boto3.client('s3')
+
 
 def upload_to_gcs(image: Image.Image, bucket_name: str, object_name: str) -> str:
     """Upload an image to Google Cloud Storage and return its URI."""
