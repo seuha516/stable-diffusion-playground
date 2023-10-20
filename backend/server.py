@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
+from flask_socketio import SocketIO
 from flask_cors import CORS
 from PIL import Image
 from predict import predict
@@ -10,6 +11,7 @@ import config
 app = Flask(__name__)
 app.config.from_object(config.LocalConfig)
 CORS(app)
+socketio = SocketIO(app)
 
 
 @app.route('/images/<image_filename>', methods=['GET'])
@@ -53,6 +55,7 @@ def predictions():
         seed=seed,
         image=image,
         prompt_strength=prompt_strength,
+        socketio=socketio,
     )
 
     # Upload the image to Google Cloud Storage
@@ -72,5 +75,4 @@ def predictions():
 
 
 if __name__ == '__main__':
-    app.run(ssl_context='adhoc')  # ssl_context is added for HTTPS
-
+    socketio.run(app, ssl_context='adhoc', allow_unsafe_werkzeug=True)  # ssl_context is added for HTTPS

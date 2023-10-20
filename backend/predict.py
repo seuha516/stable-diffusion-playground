@@ -11,6 +11,8 @@ from diffusers import (
 )
 from PIL import Image
 from typing import Any, Optional
+import datetime
+from flask_socketio import SocketIO
 
 
 class KarrasDPM:
@@ -62,11 +64,29 @@ def predict(
     seed: int,
     image: Optional[Image.Image],
     prompt_strength: Optional[float],
+    socketio: SocketIO,
 ) -> Any:
     if image:
         pipe = IMG2IMG_PIPE
     else:
         pipe = TXT2IMG_PIPE
+
+    def latents_callback(i, t, latents):
+        vae = pipe.vae
+        latents = 1 / 0.18215 * latents
+        latent = vae.decode(latents).sample[0]
+        latent = (latent / 2 + 0.5).clamp(0, 1)
+        latent = latent.cuda().permute(1, 2, 0).numpy()
+        latent_image = pipe.numpy_to_pil(latent)[0]
+
+        image_name = (
+            f'{str(datetime.datetime.now().isoformat())}(intermediate_{i})'
+            .replace(".", "_")
+            .replace(":", "_")
+            + ".png"
+        )
+        latent_image.save(f'./storage/{image_name}', "PNG")
+        socketio.send(f'http://localhost:5000/images/{image_name}')
 
     pipe.scheduler = SCHEDULERS[scheduler].from_config(pipe.scheduler.config)
     generator = torch.Generator(device).manual_seed(seed)
@@ -86,6 +106,6 @@ def predict(
         args["width"] = width
         args["height"] = height
 
-    output = pipe(**args).images
+    output = pipe(**args, callback=latents_callback, callback_steps=10).images
 
     return output
