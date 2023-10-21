@@ -1,0 +1,36 @@
+.UploadButton {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 0.125rem dotted #313131;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: opacity 0.15s linear;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &.Disabled {
+    cursor: default;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .Image {
+    width: 100%;
+  }
+
+  .UploadText {
+    font-size: 1.5rem;
+  }
+}
+
+.Input {
+  display: none;
+}

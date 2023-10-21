@@ -1,0 +1,10 @@
+.Container {
+  width: 100%;
+  gap: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+
+  img {
+    width: calc(50% - 0.25rem);
+  }
+}

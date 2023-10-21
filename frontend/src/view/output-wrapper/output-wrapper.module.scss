@@ -1,0 +1,13 @@
+.Container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .Title {
+    font-size: 1.25rem;
+    font-family: "Roboto Flex";
+    font-weight: 500;
+    color: #243b53;
+  }
+}
