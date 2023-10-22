@@ -82,13 +82,17 @@ def predict(
         latents = pipe.vae.decode(latents).sample
 
         for latent in latents:
-            latent = (latent / 2 + 0.5).clamp(0, 1)
-            latent = latent.cuda().cpu().permute(1, 2, 0).numpy()
-            latent_image = pipe.numpy_to_pil(latent)[0]
+            intermediate_urls.append("https://placekitten.com/100/100")
 
-            latent_image_name = get_image_name()
-            latent_image.save(f'./storage/{latent_image_name}', "PNG")
-            intermediate_urls.append(f'{SERVEL_URL}/images/{latent_image_name}')
+            # TODO: setting nvidia in docker
+
+            # latent = (latent / 2 + 0.5).clamp(0, 1)
+            # latent = latent.cuda().permute(1, 2, 0).numpy()
+            # latent_image = pipe.numpy_to_pil(latent)[0]
+            #
+            # latent_image_name = get_image_name()
+            # latent_image.save(f'./storage/{latent_image_name}', "PNG")
+            # intermediate_urls.append(f'{SERVEL_URL}/images/{latent_image_name}')
 
         socketio.emit(
             'data',
