@@ -47,7 +47,7 @@ def predictions():
         image = Image.open(image).convert('RGB')
     prompt_strength = float(input_data.get('prompt_strength', 0.8))
 
-    image_urls = predict(
+    predict(
         prompt=prompt,
         negative_prompt=negative_prompt,
         width=width,
@@ -62,7 +62,7 @@ def predictions():
         socketio=socketio,
     )
 
-    return jsonify(image_urls)
+    return jsonify(success=True)
 
 
 if __name__ == '__main__':

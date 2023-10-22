@@ -18,11 +18,18 @@ function MainPage() {
   const [output, setOutput] = useState<OutputType>(initialOutput);
 
   useEffect(() => {
-    socket.on("data", (data: any) => {
+    socket.on("intermediate_data", (data: any) => {
       setOutput({
         images: data.images,
         similarImages: [],
         process: data.process,
+      });
+    });
+    socket.on("final_data", (data: any) => {
+      setOutput({
+        images: data.images,
+        similarImages: [],
+        process: null,
       });
     });
   }, []);
@@ -49,16 +56,8 @@ function MainPage() {
     window.scrollTo(0, 0);
     setOutput({ ...initialOutput, process: 0 });
 
-    const response = await axios.post(
-      `${SERVER_URL}/v1/predictions`,
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-
-    setOutput({
-      images: response.data as string[],
-      similarImages: [],
-      process: null,
+    await axios.post(`${SERVER_URL}/v1/predictions`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
   };
 

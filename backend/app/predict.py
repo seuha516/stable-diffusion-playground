@@ -96,7 +96,7 @@ def predict(
             intermediate_urls.append(f'{SERVEL_URL}/images/{latent_image_name}')
 
         socketio.emit(
-            'data',
+            'intermediate_data',
             {"images": intermediate_urls, "process": i + 1}
         )
 
@@ -128,4 +128,4 @@ def predict(
         output.save(f'./storage/{image_name}', "PNG")
         image_urls.append(f'{SERVEL_URL}/images/{image_name}')
 
-    return image_urls
+    socketio.emit('final_data', {"images": image_urls})
