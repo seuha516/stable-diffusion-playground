@@ -1,4 +1,3 @@
-import torch
 from diffusers import (
     DDIMScheduler,
     DiffusionPipeline,
@@ -11,6 +10,11 @@ from diffusers import (
 )
 from PIL import Image
 from typing import Any, Optional
+from util import get_image_name
+from flask_socketio import SocketIO
+import torch
+
+SERVEL_URL = 'http://localhost:5000'
 
 
 class KarrasDPM:
@@ -65,11 +69,31 @@ def predict(
     seed: int,
     image: Optional[Image.Image],
     prompt_strength: Optional[float],
+    socketio: SocketIO,
 ) -> Any:
     if image:
         pipe = IMG2IMG_PIPE
     else:
         pipe = TXT2IMG_PIPE
+
+    def latents_callback(i, t, latents):
+        intermediate_urls = []
+        latents = 1 / 0.18215 * latents
+        latents = pipe.vae.decode(latents).sample
+
+        for latent in latents:
+            latent = (latent / 2 + 0.5).clamp(0, 1)
+            latent = latent.cuda().cpu().permute(1, 2, 0).numpy()
+            latent_image = pipe.numpy_to_pil(latent)[0]
+
+            latent_image_name = get_image_name()
+            latent_image.save(f'./storage/{latent_image_name}', "PNG")
+            intermediate_urls.append(f'{SERVEL_URL}/images/{latent_image_name}')
+
+        socketio.emit(
+            'data',
+            {"images": intermediate_urls, "process": i + 1}
+        )
 
     pipe.scheduler = SCHEDULERS[scheduler].from_config(pipe.scheduler.config)
     generator = torch.Generator(device).manual_seed(seed)
@@ -89,6 +113,14 @@ def predict(
         args["width"] = width
         args["height"] = height
 
-    output = pipe(**args).images
+    outputs = pipe(**args, callback=latents_callback, callback_steps=1).images
 
-    return output
+    # TODO: Upload the image to Google Cloud Storage
+    # TODO: Replace the bucket name with environment variable
+    image_urls = []
+    for output_num, output in enumerate(outputs):
+        image_name = get_image_name()
+        output.save(f'./storage/{image_name}', "PNG")
+        image_urls.append(f'{SERVEL_URL}/images/{image_name}')
+
+    return image_urls

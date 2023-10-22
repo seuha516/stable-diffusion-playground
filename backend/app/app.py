@@ -1,15 +1,16 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from flask_socketio import SocketIO
 from PIL import Image
-from util import get_image_name
 from predict import predict
 import json
-import storage
 import config
+# import storage
 
 app = Flask(__name__)
 app.config.from_object(config.LocalConfig)
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 @app.route('/health', methods=['GET'])
@@ -46,7 +47,7 @@ def predictions():
         image = Image.open(image).convert('RGB')
     prompt_strength = float(input_data.get('prompt_strength', 0.8))
 
-    outputs = predict(
+    image_urls = predict(
         prompt=prompt,
         negative_prompt=negative_prompt,
         width=width,
@@ -58,18 +59,11 @@ def predictions():
         seed=seed,
         image=image,
         prompt_strength=prompt_strength,
+        socketio=socketio,
     )
 
-    # Upload the image to Google Cloud Storage
-    # TODO: Replace the bucket name with environment variable
-    gcs_uris = []
-    for output_num, output in enumerate(outputs):
-        image_name = get_image_name()
-        output.save(f'./storage/{image_name}', "PNG")
-        gcs_uris.append(f'https://localhost/images/{image_name}')
-
-    return jsonify(gcs_uris)
+    return jsonify(image_urls)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
