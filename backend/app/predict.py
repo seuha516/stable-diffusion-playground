@@ -14,7 +14,7 @@ from util import get_image_name
 from flask_socketio import SocketIO
 import torch
 
-SERVEL_URL = 'http://localhost:5000'
+SERVEL_URL = 'https://localhost'
 
 
 class KarrasDPM:

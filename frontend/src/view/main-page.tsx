@@ -9,7 +9,7 @@ import classes from "./main-page.module.scss";
 import { InputType, Mode, OutputType } from "./model";
 import OutputWrapper from "./output-wrapper/output-wrapper";
 
-const SERVER_URL = "http://localhost:5000";
+const SERVER_URL = "https://localhost";
 const socket = io(SERVER_URL);
 
 function MainPage() {
