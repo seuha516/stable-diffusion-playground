@@ -18,7 +18,10 @@ class KarrasDPM:
         return DPMSolverMultistepScheduler.from_config(config, use_karras_sigmas=True)
 
 
-device = "cuda"
+if torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
 
 SCHEDULERS = {
     "DDIM": DDIMScheduler,

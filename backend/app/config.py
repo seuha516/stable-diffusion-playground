@@ -1,7 +1,6 @@
 class Config(object):
     DEBUG = False
     TESTING = False
-    SERVER_NAME = ""
 
 
 class ProductionConfig(Config):
@@ -14,7 +13,6 @@ class DevelopmentConfig(Config):
 
 class LocalConfig(Config):
     DEBUG = True
-    SERVER_NAME = "localhost:5000"
 
 
 class TestingConfig(Config):

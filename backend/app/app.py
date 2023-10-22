@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from PIL import Image
-from predict import predict
+import predict
 import datetime
 import json
 import storage
@@ -11,6 +11,9 @@ app = Flask(__name__)
 app.config.from_object(config.LocalConfig)
 CORS(app)
 
+@app.route('/health', methods=['GET'])
+def health():
+    return 'OK'
 
 @app.route('/images/<image_filename>', methods=['GET'])
 def get_images(image_filename):
@@ -72,5 +75,4 @@ def predictions():
 
 
 if __name__ == '__main__':
-    app.run(ssl_context='adhoc')  # ssl_context is added for HTTPS
-
+    app.run(host='0.0.0.0', port=5000)
