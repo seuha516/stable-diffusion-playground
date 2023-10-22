@@ -50,7 +50,6 @@ function MainPage() {
     setOutput({ ...initialOutput, process: 0 });
 
     const response = await axios.post(
-      // "https://localhost/v1/predictions",
       `${SERVER_URL}/v1/predictions`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
