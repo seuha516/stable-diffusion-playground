@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from PIL import Image
-import predict
+from util import get_image_name
+from predict import predict
 import datetime
 import json
 import storage
@@ -11,9 +12,11 @@ app = Flask(__name__)
 app.config.from_object(config.LocalConfig)
 CORS(app)
 
+
 @app.route('/health', methods=['GET'])
 def health():
     return 'OK'
+
 
 @app.route('/images/<image_filename>', methods=['GET'])
 def get_images(image_filename):
@@ -62,14 +65,9 @@ def predictions():
     # TODO: Replace the bucket name with environment variable
     gcs_uris = []
     for output_num, output in enumerate(outputs):
-        image_name = (
-            f'{str(datetime.datetime.now().isoformat())}({output_num})'
-            .replace(".", "_")
-            .replace(":", "_")
-            + ".png"
-        )
+        image_name = get_image_name()
         output.save(f'./storage/{image_name}', "PNG")
-        gcs_uris.append(f'http://localhost:5000/images/{image_name}')
+        gcs_uris.append(f'https://localhost:5000/images/{image_name}')
 
     return jsonify(gcs_uris)
 
