@@ -36,7 +36,7 @@ function MainPage() {
     setOutput({ ...initialOutput, process: 0 });
 
     const response = await axios.post(
-      "http://localhost:5000/v1/predictions",
+      "https://localhost/v1/predictions",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );

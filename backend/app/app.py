@@ -3,7 +3,6 @@ from flask_cors import CORS
 from PIL import Image
 from util import get_image_name
 from predict import predict
-import datetime
 import json
 import storage
 import config
@@ -67,7 +66,7 @@ def predictions():
     for output_num, output in enumerate(outputs):
         image_name = get_image_name()
         output.save(f'./storage/{image_name}', "PNG")
-        gcs_uris.append(f'https://localhost:5000/images/{image_name}')
+        gcs_uris.append(f'https://localhost/images/{image_name}')
 
     return jsonify(gcs_uris)
 
