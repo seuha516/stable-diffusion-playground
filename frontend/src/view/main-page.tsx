@@ -1,5 +1,6 @@
 import { Button, Tabs } from "antd";
 import axios from "axios";
+import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 
 import { Context, initialInput, initialOutput } from "./const";
@@ -8,10 +9,23 @@ import classes from "./main-page.module.scss";
 import { InputType, Mode, OutputType } from "./model";
 import OutputWrapper from "./output-wrapper/output-wrapper";
 
+const SERVER_URL = "http://localhost:5000";
+const socket = io(SERVER_URL);
+
 function MainPage() {
   const [mode, setMode] = useState<Mode>("txt2img");
   const [input, setInput] = useState<InputType>(initialInput);
   const [output, setOutput] = useState<OutputType>(initialOutput);
+
+  useEffect(() => {
+    socket.on("data", (data: any) => {
+      setOutput({
+        images: data.images,
+        similarImages: [],
+        process: data.process,
+      });
+    });
+  }, []);
 
   // reset input and output when mode is changed
   useEffect(() => {
@@ -36,7 +50,8 @@ function MainPage() {
     setOutput({ ...initialOutput, process: 0 });
 
     const response = await axios.post(
-      "https://localhost/v1/predictions",
+      // "https://localhost/v1/predictions",
+      `${SERVER_URL}/v1/predictions`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
