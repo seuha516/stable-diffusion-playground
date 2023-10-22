@@ -20,7 +20,10 @@ class KarrasDPM:
         return DPMSolverMultistepScheduler.from_config(config, use_karras_sigmas=True)
 
 
-device = "cuda"
+if torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
 
 SCHEDULERS = {
     "DDIM": DDIMScheduler,
@@ -76,7 +79,10 @@ def predict(
         latents = 1 / 0.18215 * latents
         latent = vae.decode(latents).sample[0]
         latent = (latent / 2 + 0.5).clamp(0, 1)
-        latent = latent.cuda().permute(1, 2, 0).numpy()
+        if torch.cuda.is_available():
+            latent = latent.cuda().permute(1, 2, 0).numpy()
+        else:
+            latent = latent.cpu().permute(1, 2, 0).numpy()
         latent_image = pipe.numpy_to_pil(latent)[0]
 
         image_name = (
