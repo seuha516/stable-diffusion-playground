@@ -5,9 +5,7 @@ services:
     restart: always
     command: yarn start
     container_name: frontend
-    build:
-      context: /frontend
-      dockerfile: Dockerfile
+    build: .
     ports:
       - "3000:3000"
     stdin_open: true

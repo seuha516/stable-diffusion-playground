@@ -7,7 +7,7 @@ import SimilarImages from "../../component/output/similar-images/similar-images"
 
 export default function OutputWrapper() {
   const {
-    input: { num_inference_steps, num_outputs },
+    input: { num_inference_steps },
     output: { images, similarImages, process },
   } = useContext(Context);
 
@@ -32,11 +32,7 @@ export default function OutputWrapper() {
       )}
 
       {process !== null && (
-        <Loading
-          current={process}
-          num_inference_steps={num_inference_steps}
-          num_outputs={num_outputs}
-        />
+        <Loading current={process} num_inference_steps={num_inference_steps} />
       )}
 
       {images !== null && <OutputImages images={images} />}
