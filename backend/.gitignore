@@ -2,6 +2,7 @@ nginx/ssl/*
 volumes/*
 **/volumes/*
 app/storage/*.png
+app/model/*
 .DS_STORE
 .idea
 __pycache__
