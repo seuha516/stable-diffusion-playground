@@ -4,10 +4,12 @@ from flask_socketio import SocketIO
 from PIL import Image
 from predict import predict
 import json
+import torch
 import config
 # import storage
 
 socketio = SocketIO(cors_allowed_origins="*")
+
 
 def create_app():
     
@@ -22,6 +24,9 @@ def create_app():
     def health():
         return 'OK'
 
+    @app.route('/gpu', methods=['GET'])
+    def gpu():
+        return torch.cuda.is_available()
 
     @app.route('/images/<image_filename>', methods=['GET'])
     def get_images(image_filename):
@@ -29,7 +34,6 @@ def create_app():
             return send_from_directory('storage', image_filename)
         except Exception as e:
             return str(e)
-
 
     @app.route('/v1/predictions', methods=['POST'])
     def predictions():
@@ -70,3 +74,8 @@ def create_app():
         return jsonify(success=True)
     
     return app
+
+
+if __name__ == '__main__':
+    create_app().run(host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
+    
