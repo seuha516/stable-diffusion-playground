@@ -17,7 +17,13 @@ services:
       context: .
       dockerfile: docker/gpu/Dockerfile
     container_name: flask
-    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/app:/app
     working_dir: /app

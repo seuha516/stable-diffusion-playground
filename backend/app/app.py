@@ -4,6 +4,7 @@ from flask_socketio import SocketIO
 from PIL import Image
 from predict import predict
 import json
+import torch
 import config
 # import storage
 
@@ -16,6 +17,10 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 @app.route('/health', methods=['GET'])
 def health():
     return 'OK'
+
+@app.route('/gpu', methods=['GET'])
+def gpu():
+    return torch.cuda.is_available()
 
 
 @app.route('/images/<image_filename>', methods=['GET'])
