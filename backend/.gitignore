@@ -1,9 +1,12 @@
+env/
 nginx/ssl/*
 volumes/*
 **/volumes/*
+
 app/storage/*.png
 app/model/*
+!app/model/model.txt
+
 .DS_STORE
 .idea
 __pycache__
-env/
