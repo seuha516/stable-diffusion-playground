@@ -7,11 +7,9 @@ RUN apt-get update && apt-get install -y python3.9 python3-pip
 # Set a directory for the app
 WORKDIR /app
 
-# Copy all the files to the container
-COPY . .
+# copy requirements
+COPY ./requirements.txt ./requirements.txt
 
 # Install dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Your application's run command
-CMD ["python3", "your_script.py"]
