@@ -12,6 +12,9 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/nginx/ssl:/etc/nginx/ssl # Map your SSL certificates here
       - ${DOCKER_VOLUME_DIRECTORY:-.}/generate-certs.sh:/etc/nginx/ssl/generate-certs.sh
     command: '/bin/sh -c ''sh /etc/nginx/ssl/generate-certs.sh && nginx -g "daemon off;"'''
+    depends_on:
+      flask:
+        condition: service_healthy
   flask:
     build:
       context: .
@@ -19,13 +22,20 @@ services:
     container_name: flask
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/app:/app
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/models:/models
     working_dir: /app
-    command: gunicorn -b 0.0.0.0:8000 "app:create_app()" --reload
+    command: gunicorn -b 0.0.0.0:5000 "app:create_app()" --reload --worker-class eventlet
     environment:
       - FLASK_APP=app.py
       - MILVUS_STANDALONE_ADDRESS=milvus-standalone:19530
+      - HF_HOME=/models
     depends_on:
       - standalone
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5

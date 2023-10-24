@@ -6,3 +6,4 @@ app/storage/*.png
 .idea
 __pycache__
 env/
+models/
