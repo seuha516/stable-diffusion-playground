@@ -15,8 +15,6 @@ from flask_socketio import SocketIO
 import torch
 
 SERVEL_URL = 'https://localhost'
-repo_id = "./model/stable-diffusion-xl-base-1.0"
-
 
 class KarrasDPM:
     def from_config(config):
@@ -39,7 +37,7 @@ SCHEDULERS = {
 }
 
 TXT2IMG_PIPE = DiffusionPipeline.from_pretrained(
-    repo_id,
+    "stabilityai/stable-diffusion-xl-base-1.0",
     torch_dtype=torch.float32,
     use_safetensors=True,
     variant="fp32",
