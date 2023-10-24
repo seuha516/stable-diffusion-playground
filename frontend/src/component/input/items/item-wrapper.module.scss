@@ -1,0 +1,15 @@
+.Container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .Label {
+    font-size: 0.75rem !important;
+    font-family: "Roboto Mono";
+    width: fit-content;
+    padding: 0.125rem 0.5rem 0.25rem;
+    border-radius: 0.25rem;
+    background-color: #f0f4f8;
+    color: #243b53;
+  }
+}

@@ -1,0 +1,18 @@
+.Container {
+  display: flex;
+  align-items: center;
+  color: #005dde;
+
+  .LoadingIcon svg {
+    fill: #005dde;
+  }
+
+  .LoadingText {
+    margin: 0 0.5rem;
+    font-weight: 500;
+  }
+
+  .StepsText {
+    margin-left: 0.25rem;
+  }
+}

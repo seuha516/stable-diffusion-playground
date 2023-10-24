@@ -1,0 +1,14 @@
+.ContentWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .Input {
+    width: 6rem;
+    text-align: center;
+  }
+
+  .Slider {
+    width: 100%;
+  }
+}
