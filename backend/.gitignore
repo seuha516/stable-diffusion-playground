@@ -1,2 +1,3 @@
 nginx/ssl/*
 volumes/*
+**/volumes/*
