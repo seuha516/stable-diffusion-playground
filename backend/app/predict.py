@@ -16,6 +16,7 @@ import torch
 
 SERVEL_URL = 'https://localhost'
 
+
 class KarrasDPM:
     def from_config(config):
         return DPMSolverMultistepScheduler.from_config(config, use_karras_sigmas=True)
