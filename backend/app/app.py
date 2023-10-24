@@ -26,7 +26,7 @@ def create_app():
 
     @app.route('/gpu', methods=['GET'])
     def gpu():
-        return torch.cuda.is_available()
+        return 'True' if torch.cuda.is_available() else 'False'
 
     @app.route('/images/<image_filename>', methods=['GET'])
     def get_images(image_filename):
