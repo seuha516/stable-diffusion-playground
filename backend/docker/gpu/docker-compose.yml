@@ -20,6 +20,7 @@ services:
       context: .
       dockerfile: docker/gpu/Dockerfile
     container_name: flask
+    # runtime: nvidia
     deploy:
       resources:
         reservations:
@@ -31,7 +32,8 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/app:/app
       - ${DOCKER_VOLUME_DIRECTORY:-.}/models:/models
     working_dir: /app
-    command: gunicorn -b 0.0.0.0:5000 "app:create_app()" --reload --worker-class eventlet
+    command: flask run --host=0.0.0.0
+    # command: gunicorn -b 0.0.0.0:5000 "app:create_app()" --reload --worker-class eventlet
     environment:
       - FLASK_APP=app.py
       - MILVUS_STANDALONE_ADDRESS=milvus-standalone:19530
