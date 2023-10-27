@@ -10,11 +10,9 @@ from diffusers import (
 )
 from PIL import Image
 from typing import Any, Optional
-from util import get_image_name
 from flask_socketio import SocketIO
 import torch
-
-SERVEL_URL = 'https://localhost'
+import util
 
 
 class KarrasDPM:
@@ -76,8 +74,10 @@ def predict(
     else:
         pipe = TXT2IMG_PIPE
 
+    # TODO: update callback function
     def latents_callback(i, t, latents):
-        intermediate_urls = []
+        intermediate_image_urls = []
+
         latents = 1 / 0.18215 * latents
         latents = pipe.vae.decode(latents).sample
 
@@ -90,14 +90,12 @@ def predict(
                 latent = latent.cpu().permute(1, 2, 0).numpy()
 
             latent_image = pipe.numpy_to_pil(latent)[0]
-
-            latent_image_name = get_image_name()
-            latent_image.save(f'./storage/{latent_image_name}', "PNG")
-            intermediate_urls.append(f'{SERVEL_URL}/images/{latent_image_name}')
+            latent_image_url = util.get_image_url(latent_image)
+            intermediate_image_urls.append(latent_image_url)
 
         socketio.emit(
             'intermediate_data',
-            {"images": intermediate_urls, "process": i + 1}
+            {"images": intermediate_image_urls, "process": i + 1}
         )
 
     pipe.scheduler = SCHEDULERS[scheduler].from_config(pipe.scheduler.config)
@@ -120,12 +118,9 @@ def predict(
 
     outputs = pipe(**args, callback=latents_callback, callback_steps=1).images
 
-    # TODO: Upload the image to Google Cloud Storage
-    # TODO: Replace the bucket name with environment variable
     image_urls = []
     for output_num, output in enumerate(outputs):
-        image_name = get_image_name()
-        output.save(f'./storage/{image_name}', "PNG")
-        image_urls.append(f'{SERVEL_URL}/images/{image_name}')
+        image_url = util.get_image_url(output)
+        image_urls.append(image_url)
 
     socketio.emit('final_data', {"images": image_urls})

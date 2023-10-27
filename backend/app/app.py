@@ -5,9 +5,9 @@ from PIL import Image
 from predict import predict
 import json
 import torch
-import config
 # import storage
-
+import config
+import const
 
 app = Flask(__name__)
 app.config.from_object(config.LocalConfig)
@@ -25,7 +25,14 @@ def gpu():
     return 'True' if torch.cuda.is_available() else 'False'
 
 
-@app.route('/images/<image_filename>', methods=['GET'])
+@app.route('/socket-test', methods=['POST'])
+def socket_test():
+    socketio.emit("test", "socket test")
+
+    return 'OK'
+
+
+@app.route(f'{const.GET_IMAGE_API_PATH}/<image_filename>', methods=['GET'])
 def get_images(image_filename):
     try:
         return send_from_directory('storage', image_filename)
@@ -69,7 +76,7 @@ def predictions():
         socketio=socketio,
     )
 
-    return jsonify(success=True)
+    return 'OK'
 
 
 if __name__ == '__main__':
