@@ -1,6 +1,7 @@
 class Config(object):
     DEBUG = False
     TESTING = False
+    SECRET_KEY = "secret"
 
 
 class ProductionConfig(Config):

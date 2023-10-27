@@ -1,6 +1,11 @@
+env/
+models/
 nginx/ssl/*
 volumes/*
+**/volumes/*
+
 app/storage/*.png
+
 .DS_STORE
 .idea
 __pycache__
