@@ -1,7 +1,7 @@
 from flask import Flask, request, session, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room
-from predict import predict
+from predict_light import predict   # TODO: change this to 'predict'
 from PIL import Image
 import torch
 import config
