@@ -4,18 +4,26 @@ import random
 import const
 
 
-def get_image_name():
+def get_random_string():
     letters_set = string.ascii_letters
     random_letters_list = random.sample(letters_set, 24)
-    image_name = ''.join(random_letters_list)
+    random_string = ''.join(random_letters_list)
 
-    return f'{image_name}.png'
+    return random_string
+
+
+def get_image_name():
+    image_name = f'{get_random_string()}.png'
+
+    return image_name
 
 
 # TODO: Upload the image to Google Cloud Storage
-# NOTE: intermediate image should not be used in vector DB
-def get_image_url(image: Image.Image) -> str:
+# TODO: Save image in vector DB with vectorize process
+# NOTE: Intermediate image should not be used in vector DB
+def save_image(image: Image.Image):
     image_name = get_image_name()
     image.save(f'{const.STORAGE_DIR_PATH}/{image_name}', "PNG")
+    image_url = f'{const.SERVEL_URL}{const.IMAGE_API_PATH}/{image_name}'
 
-    return f'{const.SERVEL_URL}{const.GET_IMAGE_API_PATH}/{image_name}'
+    return {"image_url": image_url, "image_name": image_name}
