@@ -33,19 +33,23 @@ export default function InputWrapper() {
         onChange={(negative_prompt) => setInput({ ...input, negative_prompt })}
       />
 
-      <SelectItem<ImageSize>
-        title="width"
-        value={input.width}
-        onChange={(width) => setInput({ ...input, width })}
-        options={imageSizeOptions}
-      />
+      {mode === "txt2img" && (
+        <SelectItem<ImageSize>
+          title="width"
+          value={input.width}
+          onChange={(width) => setInput({ ...input, width })}
+          options={imageSizeOptions}
+        />
+      )}
 
-      <SelectItem<ImageSize>
-        title="height"
-        value={input.height}
-        onChange={(height) => setInput({ ...input, height })}
-        options={imageSizeOptions}
-      />
+      {mode === "txt2img" && (
+        <SelectItem<ImageSize>
+          title="height"
+          value={input.height}
+          onChange={(height) => setInput({ ...input, height })}
+          options={imageSizeOptions}
+        />
+      )}
 
       {mode === "img2img" && (
         <SliderItem

@@ -63,7 +63,7 @@ def socket_request(message):
         seed = int(body.get('seed', -1))
 
         # for img2img
-        image_name = request.files.get('image', None)
+        image_name = body.get('image', None)
         image = None
         if image_name:
             image = Image.open(f'{const.STORAGE_DIR_PATH}/{image_name}').convert('RGB')
