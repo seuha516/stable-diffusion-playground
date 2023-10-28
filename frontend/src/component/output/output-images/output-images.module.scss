@@ -7,4 +7,8 @@
   img {
     width: calc(50% - 0.25rem);
   }
+
+  &.OneImage img {
+    width: 100%;
+  }
 }
