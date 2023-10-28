@@ -9,7 +9,7 @@ from diffusers import (
     StableDiffusionXLImg2ImgPipeline
 )
 from PIL import Image
-from typing import Any, Optional
+from typing import Optional
 from flask_socketio import SocketIO
 import torch
 import util
@@ -68,7 +68,8 @@ def predict(
     image: Optional[Image.Image],
     prompt_strength: Optional[float],
     socketio: SocketIO,
-) -> Any:
+    room: str
+):
     if image:
         pipe = IMG2IMG_PIPE
     else:
@@ -85,17 +86,19 @@ def predict(
             latent = (latent / 2 + 0.5).clamp(0, 1)
 
             if torch.cuda.is_available():
-                latent = latent.cuda().permute(1, 2, 0).numpy()
+                latent = latent.cuda().cpu().permute(1, 2, 0).numpy()
             else:
                 latent = latent.cpu().permute(1, 2, 0).numpy()
 
             latent_image = pipe.numpy_to_pil(latent)[0]
-            latent_image_url = util.get_image_url(latent_image)
+            latent_image_url = util.save_image(latent_image).get("image_url")
             intermediate_image_urls.append(latent_image_url)
 
+        print(f'Emit intermediate images to {room} (process: {i + 1})')
         socketio.emit(
             'intermediate_data',
-            {"images": intermediate_image_urls, "process": i + 1}
+            {"images": intermediate_image_urls, "process": i + 1},
+            room=room
         )
 
     pipe.scheduler = SCHEDULERS[scheduler].from_config(pipe.scheduler.config)
@@ -120,7 +123,8 @@ def predict(
 
     image_urls = []
     for output_num, output in enumerate(outputs):
-        image_url = util.get_image_url(output)
+        image_url = util.save_image(output).get("image_url")
         image_urls.append(image_url)
 
-    socketio.emit('final_data', {"images": image_urls})
+    print(f'Emit final images to {room}')
+    socketio.emit('final_data', {"images": image_urls}, room=room)
