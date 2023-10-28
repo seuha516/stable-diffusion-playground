@@ -37,7 +37,8 @@ export default function OutputWrapper() {
 
       {images !== null && <OutputImages images={images} />}
 
-      {similarImages !== null && <SimilarImages images={similarImages} />}
+      {/* TODO: uncomment this */}
+      {/* {similarImages !== null && <SimilarImages images={similarImages} />} */}
     </div>
   );
 }
