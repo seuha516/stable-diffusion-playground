@@ -1,3 +1,3 @@
-SERVEL_URL = 'https://localhost'
+SERVEL_URL = 'http://localhost:5000'
 STORAGE_DIR_PATH = './storage'
-GET_IMAGE_API_PATH = '/images'
+IMAGE_API_PATH = '/image'
