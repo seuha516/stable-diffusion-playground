@@ -1,12 +1,12 @@
 from diffusers import (
     DDIMScheduler,
-    DiffusionPipeline,
     DPMSolverMultistepScheduler,
     EulerAncestralDiscreteScheduler,
     EulerDiscreteScheduler,
     HeunDiscreteScheduler,
     PNDMScheduler,
-    StableDiffusionXLImg2ImgPipeline
+    StableDiffusionPipeline,
+    StableDiffusionImg2ImgPipeline
 )
 from PIL import Image
 from typing import Optional
@@ -35,22 +35,19 @@ SCHEDULERS = {
     "PNDM": PNDMScheduler,
 }
 
-TXT2IMG_PIPE = DiffusionPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-base-1.0",
-    torch_dtype=torch.float32,
-    use_safetensors=True,
-    variant="fp32",
+TXT2IMG_PIPE = StableDiffusionPipeline.from_pretrained(
+    "runwayml/stable-diffusion-v1-5",
+    torch_dtype=torch.float16,
+    safety_checker=None,
+    requires_safety_checker=False
 )
 TXT2IMG_PIPE.to(device)
 
-IMG2IMG_PIPE = StableDiffusionXLImg2ImgPipeline(
-    vae=TXT2IMG_PIPE.vae,
-    text_encoder=TXT2IMG_PIPE.text_encoder,
-    text_encoder_2=TXT2IMG_PIPE.text_encoder_2,
-    tokenizer=TXT2IMG_PIPE.tokenizer,
-    tokenizer_2=TXT2IMG_PIPE.tokenizer_2,
-    unet=TXT2IMG_PIPE.unet,
-    scheduler=TXT2IMG_PIPE.scheduler,
+IMG2IMG_PIPE = StableDiffusionImg2ImgPipeline.from_pretrained(
+    "runwayml/stable-diffusion-v1-5",
+    torch_dtype=torch.float16,
+    safety_checker=None,
+    requires_safety_checker=False
 )
 IMG2IMG_PIPE.to(device)
 

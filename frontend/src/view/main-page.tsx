@@ -9,7 +9,7 @@ import classes from "./main-page.module.scss";
 import { InputType, Mode, OutputType } from "./model";
 import OutputWrapper from "./output-wrapper/output-wrapper";
 
-const SERVER_URL = "https://localhost";
+const SERVER_URL = process.env.REACT_APP_SERVER_URL ?? "http://localhost:5000";
 const socket = io(SERVER_URL);
 
 function MainPage() {
@@ -18,7 +18,11 @@ function MainPage() {
   const [output, setOutput] = useState<OutputType>(initialOutput);
 
   useEffect(() => {
+    socket.on("message", (message: any) => {
+      console.log(message);
+    });
     socket.on("intermediate_data", (data: any) => {
+      console.log(data);
       setOutput({
         images: data.images,
         similarImages: [],
@@ -26,6 +30,7 @@ function MainPage() {
       });
     });
     socket.on("final_data", (data: any) => {
+      console.log(data);
       setOutput({
         images: data.images,
         similarImages: [],
@@ -41,24 +46,28 @@ function MainPage() {
   }, [mode]);
 
   const generate = async () => {
-    const formData = new FormData();
     const jsonData =
       mode === "txt2img"
         ? { ...input, image: undefined, prompt_strength: undefined }
         : { ...input, image: undefined };
 
     if (input.image) {
+      const formData = new FormData();
       formData.append("image", input.image);
-    }
 
-    formData.append("data", JSON.stringify(jsonData));
+      const { data: imageName } = await axios.post(
+        `${SERVER_URL}/image`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      jsonData.image = imageName;
+    }
 
     window.scrollTo(0, 0);
     setOutput({ ...initialOutput, process: 0 });
 
-    await axios.post(`${SERVER_URL}/v1/predictions`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    socket.emit("request", { type: "prediction", body: jsonData });
   };
 
   return (
@@ -72,9 +81,9 @@ function MainPage() {
           { key: "img2img", label: "img2img" },
         ]}
         activeKey={mode}
-        onChange={(x) => {
-          if (output.process) return;
-          setMode(x as Mode);
+        onChange={(newMode) => {
+          if (output.process !== null) return;
+          setMode(newMode as Mode);
         }}
       />
 
