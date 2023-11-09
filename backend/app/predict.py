@@ -6,12 +6,15 @@ from diffusers import (
     EulerDiscreteScheduler,
     HeunDiscreteScheduler,
     PNDMScheduler,
-    StableDiffusionXLImg2ImgPipeline
+    StableDiffusionXLImg2ImgPipeline,
+    StableDiffusionPipeline,
+    StableDiffusionImg2ImgPipeline
 )
 from PIL import Image
 from typing import Optional
 from flask_socketio import SocketIO
 import torch
+import const
 import util
 
 
@@ -21,8 +24,13 @@ class KarrasDPM:
 
 
 if torch.cuda.is_available():
+    print('CUDA is available')
     device = "cuda"
+elif torch.backends.mps.is_available():
+    print('MPS is available')
+    device = "mps"
 else:
+    print('CPU is available')
     device = "cpu"
 
 SCHEDULERS = {
@@ -35,23 +43,39 @@ SCHEDULERS = {
     "PNDM": PNDMScheduler,
 }
 
-TXT2IMG_PIPE = DiffusionPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-base-1.0",
-    torch_dtype=torch.float32,
-    use_safetensors=True,
-    variant="fp32",
-)
-TXT2IMG_PIPE.to(device)
+if const.IS_LIGHT_MODEL:
+    print('Use light model')
+    TXT2IMG_PIPE = StableDiffusionPipeline.from_pretrained(
+        "runwayml/stable-diffusion-v1-5",
+        torch_dtype=torch.float16,
+        safety_checker=None,
+        requires_safety_checker=False
+    )
+    IMG2IMG_PIPE = StableDiffusionImg2ImgPipeline.from_pretrained(
+        "runwayml/stable-diffusion-v1-5",
+        torch_dtype=torch.float16,
+        safety_checker=None,
+        requires_safety_checker=False
+    )
+else:
+    print('Use sdxl')
+    TXT2IMG_PIPE = DiffusionPipeline.from_pretrained(
+        "stabilityai/stable-diffusion-xl-base-1.0",
+        torch_dtype=torch.float32,
+        use_safetensors=True,
+        variant="fp32",
+    )
+    IMG2IMG_PIPE = StableDiffusionXLImg2ImgPipeline(
+        vae=TXT2IMG_PIPE.vae,
+        text_encoder=TXT2IMG_PIPE.text_encoder,
+        text_encoder_2=TXT2IMG_PIPE.text_encoder_2,
+        tokenizer=TXT2IMG_PIPE.tokenizer,
+        tokenizer_2=TXT2IMG_PIPE.tokenizer_2,
+        unet=TXT2IMG_PIPE.unet,
+        scheduler=TXT2IMG_PIPE.scheduler,
+    )
 
-IMG2IMG_PIPE = StableDiffusionXLImg2ImgPipeline(
-    vae=TXT2IMG_PIPE.vae,
-    text_encoder=TXT2IMG_PIPE.text_encoder,
-    text_encoder_2=TXT2IMG_PIPE.text_encoder_2,
-    tokenizer=TXT2IMG_PIPE.tokenizer,
-    tokenizer_2=TXT2IMG_PIPE.tokenizer_2,
-    unet=TXT2IMG_PIPE.unet,
-    scheduler=TXT2IMG_PIPE.scheduler,
-)
+TXT2IMG_PIPE.to(device)
 IMG2IMG_PIPE.to(device)
 
 
