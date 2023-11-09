@@ -21,7 +21,8 @@ def get_image_name():
 # TODO: Upload the image to Google Cloud Storage
 # TODO: Save image in vector DB with vectorize process
 # NOTE: Intermediate image should not be used in vector DB
-def save_image(image: Image.Image):
+def save_image(image: Image.Image, ttl: bool = True):
+    # TODO: save ttl cloud if ttl is True
     image_name = get_image_name()
     image.save(f'{const.STORAGE_DIR_PATH}/{image_name}', "PNG")
     image_url = f'{const.SERVEL_URL}{const.IMAGE_API_PATH}/{image_name}'

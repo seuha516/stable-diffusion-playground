@@ -115,7 +115,7 @@ def predict(
                 latent = latent.cpu().permute(1, 2, 0).numpy()
 
             latent_image = pipe.numpy_to_pil(latent)[0]
-            latent_image_url = util.save_image(latent_image).get("image_url")
+            latent_image_url = util.save_image(latent_image, ttl=True).get("image_url")
             intermediate_image_urls.append(latent_image_url)
 
         print(f'Emit intermediate images to {room} (process: {i + 1})')

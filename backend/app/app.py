@@ -101,7 +101,7 @@ def get_image(image_filename):
 def set_image():
     image = request.files.get('image', None)
     image = Image.open(image).convert('RGB')
-    image_name = util.save_image(image).get("image_name")
+    image_name = util.save_image(image, ttl=True).get("image_name")
 
     return image_name
 
