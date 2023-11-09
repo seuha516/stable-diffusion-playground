@@ -1,8 +1,9 @@
 from flask import Flask, request, session, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room
-from predict_light import predict   # TODO: change this to 'predict'
+from predict import predict
 from PIL import Image
+import random
 import torch
 import config
 import const
@@ -17,12 +18,12 @@ socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")
 
 @app.route('/health', methods=['GET'])
 def health():
-    return 'OK'
-
-
-@app.route('/gpu', methods=['GET'])
-def gpu():
-    return 'True' if torch.cuda.is_available() else 'False'
+    if torch.cuda.is_available():
+        return 'OK (CUDA)'
+    elif torch.backends.mps.is_available():
+        return 'OK (MPS)'
+    else:
+        return 'OK (CPU)'
 
 
 @socketio.on('connect')
@@ -60,7 +61,7 @@ def socket_request(message):
         num_inference_steps = int(body.get('num_inference_steps', 50))
         guidance_scale = float(body.get('guidance_scale', 7.5))
         scheduler = body.get('scheduler', 'K_EULER')
-        seed = int(body.get('seed', -1))
+        seed = int(body.get('seed', random.randrange(1, 10000000)))
 
         # for img2img
         image_name = body.get('image', None)
@@ -100,7 +101,7 @@ def get_image(image_filename):
 def set_image():
     image = request.files.get('image', None)
     image = Image.open(image).convert('RGB')
-    image_name = util.save_image(image).get("image_name")
+    image_name = util.save_image(image, ttl=True).get("image_name")
 
     return image_name
 
