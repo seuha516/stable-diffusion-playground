@@ -72,7 +72,7 @@ function MainPage() {
 
   const stop = () => {
     socket.emit("request", { type: "stop" });
-  }
+  };
 
   return (
     <div className={classes.Container}>
@@ -96,20 +96,19 @@ function MainPage() {
           <div className={classes.InputWrapper}>
             <InputWrapper />
 
-            {output.process === null ? <Button
-              className={classes.GenerateButton}
-              type="primary"
-              onClick={generate}
-            >
-              Generate
-            </Button> : <Button
-                className={''}
-                type="cancel"
-                onClick={stop}
-            >
-             Stop
-            </Button>
-            </Button>
+            {output.process === null ? (
+              <Button
+                className={classes.InputButton}
+                type="primary"
+                onClick={generate}
+              >
+                Generate
+              </Button>
+            ) : (
+              <Button className={classes.InputButton} onClick={stop}>
+                Stop
+              </Button>
+            )}
           </div>
 
           <div className={classes.OutputWrapper}>
