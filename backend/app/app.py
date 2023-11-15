@@ -1,9 +1,7 @@
-import threading
-import ctypes
 from flask import Flask, request, session, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room
-from predict import predict
+from predict import predict, predicting_rooms
 from PIL import Image
 import random
 import torch
@@ -16,7 +14,6 @@ app = Flask(__name__)
 app.config.from_object(config.LocalConfig)
 CORS(app)
 socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")
-room_thread_dict = {}
 
 
 @app.route('/health', methods=['GET'])
@@ -51,10 +48,6 @@ def disconnect():
 def socket_request(message):
     room = session['room']
     print(f'(Socket request from {room})', message)
-
-    thread_id = threading.current_thread().ident
-    room_thread_dict[room] = thread_id
-
     body = message['body']
 
     if message['type'] == 'prediction':
@@ -76,6 +69,7 @@ def socket_request(message):
             image = Image.open(f'{const.STORAGE_DIR_PATH}/{image_name}').convert('RGB')
         prompt_strength = float(body.get('prompt_strength', 0.8))
 
+        predicting_rooms.add(room)
         predict(
             prompt=prompt,
             negative_prompt=negative_prompt,
@@ -91,34 +85,13 @@ def socket_request(message):
             socketio=socketio,
             room=room
         )
+    elif message['type'] == 'stop':
+        if room in predicting_rooms:
+            predicting_rooms.remove(room)
+            print(f'Inference cancelled: {room}')
+            socketio.emit('stop', room=room)
     else:
         print('Not found')
-
-
-@socketio.on("stop")
-def stop_generate(msg):
-    room = session['room']
-    print(f'Stop generate request from {room}')
-    thread_id = room_thread_dict.get(room)
-
-    if thread_id is None:   # 해당 room에서 predicting 중인 thread 없음
-        print('stop failed: No running thread')
-        socketio.emit('message', 'stop failed: No running thread', room=room)
-    else:
-        for idd in threading._active.keys():
-            if idd == thread_id:
-                res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, ctypes.py_object(SystemExit))
-                
-                if res > 1:     # thread raising exception failure
-                    ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-                    print('raising exception failure')
-                    socketio.emit('message', "Stop Generate failed", room=room)
-                    return
-
-                print(f"Generate Stopped: {room}")
-                socketio.emit('message', f"Generate Stopped: {room}", room=room)
-                break
-        room_thread_dict.pop(room)
 
 
 @app.route(f'{const.IMAGE_API_PATH}/<image_filename>', methods=['GET'])

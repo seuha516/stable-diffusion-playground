@@ -17,6 +17,8 @@ import torch
 import const
 import util
 
+predicting_rooms = set()
+
 
 class KarrasDPM:
     def from_config(config):
@@ -101,6 +103,9 @@ def predict(
 
     # TODO: update callback function
     def latents_callback(i, t, latents):
+        if room not in predicting_rooms:
+            raise Exception("Inference Stopped")
+
         intermediate_image_urls = []
 
         latents = 1 / 0.18215 * latents
