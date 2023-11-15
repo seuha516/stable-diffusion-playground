@@ -16,6 +16,10 @@ from flask_socketio import SocketIO
 import torch
 import const
 import util
+from threading import Lock
+
+set_lock = Lock()
+predicting_rooms = set()
 
 
 class KarrasDPM:
@@ -47,13 +51,13 @@ if const.IS_LIGHT_MODEL:
     print('Use light model')
     TXT2IMG_PIPE = StableDiffusionPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16,
+        #torch_dtype=torch.float16,
         safety_checker=None,
         requires_safety_checker=False
     )
     IMG2IMG_PIPE = StableDiffusionImg2ImgPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16,
+        #torch_dtype=torch.float16,
         safety_checker=None,
         requires_safety_checker=False
     )
@@ -101,6 +105,10 @@ def predict(
 
     # TODO: update callback function
     def latents_callback(i, t, latents):
+        with set_lock:
+            if room not in predicting_rooms:
+                raise Exception("Inference Stopped")
+
         intermediate_image_urls = []
 
         latents = 1 / 0.18215 * latents
