@@ -70,6 +70,10 @@ function MainPage() {
     socket.emit("request", { type: "prediction", body: jsonData });
   };
 
+  const stop = () => {
+    socket.emit("request", { type: "stop" });
+  }
+
   return (
     <div className={classes.Container}>
       <span className={classes.Title}>Stable Diffusion Playground</span>
@@ -92,13 +96,19 @@ function MainPage() {
           <div className={classes.InputWrapper}>
             <InputWrapper />
 
-            <Button
+            {output.process === null ? <Button
               className={classes.GenerateButton}
               type="primary"
               onClick={generate}
-              disabled={output.process !== null}
             >
               Generate
+            </Button> : <Button
+                className={''}
+                type="cancel"
+                onClick={stop}
+            >
+             Stop
+            </Button>
             </Button>
           </div>
 
