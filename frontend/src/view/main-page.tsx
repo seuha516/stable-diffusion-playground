@@ -37,6 +37,10 @@ function MainPage() {
         process: null,
       });
     });
+    socket.on("stop", () => {
+      console.log("stop");
+      setOutput(initialOutput);
+    });
   }, []);
 
   // reset input and output when mode is changed
