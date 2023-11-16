@@ -107,6 +107,8 @@ def predict(
     def latents_callback(i, t, latents):
         with set_lock:
             if room not in predicting_rooms:
+                socketio.emit('stop', room=room)
+                print(f'Inference cancelled: {room}')
                 raise Exception("Inference Stopped")
 
         intermediate_image_urls = []

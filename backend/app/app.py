@@ -41,6 +41,10 @@ def disconnect():
     room = session['room']
     session.clear()
 
+    with set_lock:
+        if room in predicting_rooms:
+            predicting_rooms.remove(room)
+
     print(f'Disconnect {room}')
 
 
@@ -48,7 +52,7 @@ def disconnect():
 def socket_request(message):
     room = session['room']
     print(f'(Socket request from {room})', message)
-    body = message['body']
+    body = message.get('body', {})
 
     if message['type'] == 'prediction':
         # for txt2img
@@ -90,8 +94,6 @@ def socket_request(message):
         with set_lock:
             if room in predicting_rooms:
                 predicting_rooms.remove(room)
-                print(f'Inference cancelled: {room}')
-                socketio.emit('stop', room=room)
     else:
         print('Not found')
 
