@@ -37,6 +37,10 @@ function MainPage() {
         process: null,
       });
     });
+    socket.on("stop", () => {
+      console.log("stop");
+      setOutput(initialOutput);
+    });
   }, []);
 
   // reset input and output when mode is changed
@@ -70,6 +74,10 @@ function MainPage() {
     socket.emit("request", { type: "prediction", body: jsonData });
   };
 
+  const stop = () => {
+    socket.emit("request", { type: "stop" });
+  };
+
   return (
     <div className={classes.Container}>
       <span className={classes.Title}>Stable Diffusion Playground</span>
@@ -92,14 +100,19 @@ function MainPage() {
           <div className={classes.InputWrapper}>
             <InputWrapper />
 
-            <Button
-              className={classes.GenerateButton}
-              type="primary"
-              onClick={generate}
-              disabled={output.process !== null}
-            >
-              Generate
-            </Button>
+            {output.process === null ? (
+              <Button
+                className={classes.InputButton}
+                type="primary"
+                onClick={generate}
+              >
+                Generate
+              </Button>
+            ) : (
+              <Button className={classes.InputButton} onClick={stop}>
+                Stop
+              </Button>
+            )}
           </div>
 
           <div className={classes.OutputWrapper}>

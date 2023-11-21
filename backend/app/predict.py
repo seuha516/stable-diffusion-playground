@@ -16,6 +16,10 @@ from flask_socketio import SocketIO
 import torch
 import const
 import util
+from threading import Lock
+
+set_lock = Lock()
+predicting_rooms = set()
 
 
 class KarrasDPM:
@@ -101,6 +105,12 @@ def predict(
 
     # TODO: update callback function
     def latents_callback(i, t, latents):
+        with set_lock:
+            if room not in predicting_rooms:
+                socketio.emit('stop', room=room)
+                print(f'Inference cancelled: {room}')
+                raise Exception("Inference Stopped")
+
         intermediate_image_urls = []
 
         latents = 1 / 0.18215 * latents
