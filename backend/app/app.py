@@ -1,7 +1,7 @@
 from flask import Flask, request, session, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room
-from predict import predict
+from predict import predict, predicting_rooms, set_lock
 from PIL import Image
 import random
 import torch
@@ -43,6 +43,10 @@ def disconnect():
     room = session['room']
     session.clear()
 
+    with set_lock:
+        if room in predicting_rooms:
+            predicting_rooms.remove(room)
+
     print(f'Disconnect {room}')
 
 
@@ -50,8 +54,7 @@ def disconnect():
 def socket_request(message):
     room = session['room']
     print(f'(Socket request from {room})', message)
-
-    body = message['body']
+    body = message.get('body', {})
 
     if message['type'] == 'prediction':
         # for txt2img
@@ -72,6 +75,8 @@ def socket_request(message):
             image = Image.open(f'{const.STORAGE_DIR_PATH}/{image_name}').convert('RGB')
         prompt_strength = float(body.get('prompt_strength', 0.8))
 
+        with set_lock:
+            predicting_rooms.add(room)
         predict(
             prompt=prompt,
             negative_prompt=negative_prompt,
@@ -87,6 +92,10 @@ def socket_request(message):
             socketio=socketio,
             room=room
         )
+    elif message['type'] == 'stop':
+        with set_lock:
+            if room in predicting_rooms:
+                predicting_rooms.remove(room)
     else:
         print('Not found')
 
