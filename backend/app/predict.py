@@ -16,6 +16,7 @@ from flask_socketio import SocketIO
 import torch
 import const
 import util
+import milvus
 
 
 class KarrasDPM:
@@ -149,6 +150,14 @@ def predict(
     for output_num, output in enumerate(outputs):
         image_url = util.save_image(output).get("image_url")
         image_urls.append(image_url)
+        
+    print(f'Saving final images to db')
+    for image_url in image_urls:
+        try:
+            milvus.insert_image_and_prompt(image_url, prompt)
+        except Exception as e:
+            print(e)
+            pass
 
     print(f'Emit final images to {room}')
     socketio.emit('final_data', {"images": image_urls}, room=room)

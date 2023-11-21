@@ -8,6 +8,8 @@ import torch
 import config
 import const
 import util
+import milvus
+from pymilvus import connections
 # import storage
 
 app = Flask(__name__)
@@ -105,6 +107,13 @@ def set_image():
 
     return image_name
 
+@app.route(f'/similar/image/<image_filename>', methods=['GET'])
+def similar_image(image_filename):
+    return milvus.find_similar_images_by_image(f'{const.SERVEL_URL}{const.IMAGE_API_PATH}/{image_filename}')
+
+@app.route(f'/similar/prompt/<prompt>', methods=['GET'])
+def similar_prompt(prompt):
+    return milvus.find_similar_images_by_prompt(prompt)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
