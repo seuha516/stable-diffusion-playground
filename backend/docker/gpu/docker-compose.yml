@@ -39,7 +39,8 @@ services:
       - MILVUS_STANDALONE_ADDRESS=milvus-standalone:19530
       - HF_HOME=/models
     depends_on:
-      - standalone
+      standalone:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 10s
