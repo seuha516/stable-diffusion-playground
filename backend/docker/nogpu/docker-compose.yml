@@ -37,7 +37,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 100
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -53,7 +53,7 @@ services:
       test: ["CMD", "etcdctl", "endpoint", "health"]
       interval: 30s
       timeout: 20s
-      retries: 3
+      retries: 100
 
   minio:
     container_name: milvus-minio
@@ -71,7 +71,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
-      retries: 3
+      retries: 100
 
   standalone:
     container_name: milvus-standalone
@@ -87,7 +87,7 @@ services:
       interval: 30s
       start_period: 90s
       timeout: 20s
-      retries: 3
+      retries: 100
     ports:
       - "19530:19530"
       - "9091:9091"
