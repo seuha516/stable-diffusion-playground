@@ -52,13 +52,13 @@ if const.IS_LIGHT_MODEL:
     print('Use light model')
     TXT2IMG_PIPE = StableDiffusionPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16,
+        # torch_dtype=torch.float16,
         safety_checker=None,
         requires_safety_checker=False
     )
     IMG2IMG_PIPE = StableDiffusionImg2ImgPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16,
+        # torch_dtype=torch.float16,
         safety_checker=None,
         requires_safety_checker=False
     )
