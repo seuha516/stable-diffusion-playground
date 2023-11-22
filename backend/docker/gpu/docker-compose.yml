@@ -32,8 +32,8 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/app:/app
       - ${DOCKER_VOLUME_DIRECTORY:-.}/models:/models
     working_dir: /app
-    command: flask run --host=0.0.0.0
-    # command: gunicorn -b 0.0.0.0:5000 "app:create_app()" --reload --worker-class eventlet
+    command: flask run --host=0.0.0.0 --port=8000
+    # command: gunicorn -b 0.0.0.0:8000 "app:create_app()" --reload --worker-class eventlet
     environment:
       - FLASK_APP=app.py
       - MILVUS_STANDALONE_ADDRESS=milvus-standalone:19530
@@ -42,7 +42,7 @@ services:
       standalone:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -83,7 +83,7 @@ services:
 
   standalone:
     container_name: milvus-standalone
-    image: milvusdb/milvus:v2.3.1
+    image: milvusdb/milvus:v2.3.3
     command: ["milvus", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
