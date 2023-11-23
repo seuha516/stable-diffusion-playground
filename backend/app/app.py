@@ -102,7 +102,7 @@ def socket_request(message):
 
         socketio.emit('similar_by_prompt', {"images": image_urls}, room=room)
 
-    elif message['type'] == 'similar_by_imgae':
+    elif message['type'] == 'similar_by_image':
         image_filename = body.get('image', '')
         similar_result = milvus.find_similar_images_by_image(
             f'{const.SERVER_URL}{const.IMAGE_API_PATH}/{image_filename}', 10
