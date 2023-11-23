@@ -98,7 +98,7 @@ image_model = ViTModel.from_pretrained('google/vit-base-patch16-224')
 
 # Function to convert image to vector
 def image_to_vector(image_url):
-    response = requests.get(image_url.replace(const.SERVER_URL, const.INTERNAL_SERVER_URL))
+    response = requests.get(image_url.replace(const.SERVER_URL, const.INTERNAL_SERVER_URL, 1))
     image = Image.open(BytesIO(response.content))
     # Apply feature extractor to the image
     inputs = feature_extractor(images=image, return_tensors="pt")

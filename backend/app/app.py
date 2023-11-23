@@ -103,16 +103,14 @@ def socket_request(message):
         socketio.emit('similar_by_prompt', {"images": image_urls}, room=room)
 
     elif message['type'] == 'similar_by_image':
-        image_filename = body.get('image', '')
-        similar_result = milvus.find_similar_images_by_image(
-            f'{const.SERVER_URL}{const.IMAGE_API_PATH}/{image_filename}', 10
-        )
+        image_url = body.get('image', '')
+        similar_result = milvus.find_similar_images_by_image(image_url, 10)
 
         image_urls = []
         for item in similar_result:
             image_urls.append(item.get('image_url'))
 
-        socketio.emit('similar_by_imgae', {"images": image_urls}, room=room)
+        socketio.emit('similar_by_image', {"images": image_urls}, room=room)
 
     elif message['type'] == 'stop':
         with set_lock:
