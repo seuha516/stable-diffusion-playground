@@ -105,7 +105,7 @@ def socket_request(message):
     elif message['type'] == 'similar_by_imgae':
         image_filename = body.get('image', '')
         similar_result = milvus.find_similar_images_by_image(
-            f'http://localhost:8000{const.IMAGE_API_PATH}/{image_filename}', 10
+            f'{const.SERVER_URL}{const.IMAGE_API_PATH}/{image_filename}', 10
         )
 
         image_urls = []
@@ -142,7 +142,7 @@ def set_image():
 
 @app.route(f'/similar/image/<image_filename>', methods=['GET'])
 def similar_image(image_filename):
-    return milvus.find_similar_images_by_image(f'http://localhost:8000{const.IMAGE_API_PATH}/{image_filename}', 10)
+    return milvus.find_similar_images_by_image(f'{const.SERVER_URL}{const.IMAGE_API_PATH}/{image_filename}', 10)
 
 
 @app.route(f'/similar/prompt/<prompt>', methods=['GET'])

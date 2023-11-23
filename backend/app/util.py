@@ -25,6 +25,6 @@ def save_image(image: Image.Image, ttl: bool = True):
     # TODO: save ttl cloud if ttl is True
     image_name = get_image_name()
     image.save(f'{const.STORAGE_DIR_PATH}/{image_name}', "PNG")
-    image_url = f'{const.SERVEL_URL}{const.IMAGE_API_PATH}/{image_name}'
+    image_url = f'{const.SERVER_URL}{const.IMAGE_API_PATH}/{image_name}'
 
     return {"image_url": image_url, "image_name": image_name}

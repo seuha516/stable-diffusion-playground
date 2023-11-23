@@ -98,8 +98,7 @@ image_model = ViTModel.from_pretrained('google/vit-base-patch16-224')
 
 # Function to convert image to vector
 def image_to_vector(image_url):
-    print(f'GOGO {image_url}')
-    response = requests.get(image_url)
+    response = requests.get(image_url.replace(const.SERVER_URL, const.INTERNAL_SERVER_URL))
     image = Image.open(BytesIO(response.content))
     # Apply feature extractor to the image
     inputs = feature_extractor(images=image, return_tensors="pt")
@@ -155,8 +154,6 @@ def search(query, top_k=5, search_by=SearchType.IMAGE):
 
 # Function to find similar image URLs from the database and their matching prompts
 def find_similar_images_by_image(image_url, top_k=5):
-    print('GOGO')
-    print(image_url)
     query_vector = image_to_vector(image_url)
     results = image_collection.search([query_vector], "image_embedding", {"metric_type": "L2", "params": {"nprobe": 16}}, top_k, "id > 0")
     
