@@ -90,7 +90,7 @@ function MainPage() {
         ]}
         activeKey={mode}
         onChange={(newMode) => {
-          if (output.process !== null) return;
+          if (output.process !== null && !output.isStopped) return;
           setMode(newMode as Mode);
         }}
       />

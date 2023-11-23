@@ -26,7 +26,7 @@ export default function SliderItem({
   isInteger,
 }: SliderItemProps) {
   const { output } = useContext(Context);
-  const disabled = output.process !== null;
+  const disabled = output.process !== null && !output.isStopped;
 
   const [input, setInput] = useState<string>(value.toString());
 
