@@ -1,22 +1,23 @@
 from pymilvus import Collection, connections, FieldSchema, CollectionSchema, DataType, utility
 from transformers import ViTFeatureExtractor, ViTModel
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
 from PIL import Image
-import numpy as np
-import torch
 from enum import Enum
-import requests
-import time
 from io import BytesIO
+import requests
+import torch
+import time
 import const
 
 # Connect to Milvus server at specific host and port
 connections.connect(alias='default', host=const.MILVUS_HOST, port=const.MILVUS_PORT)
 
+
 # Define an Enum for search type
 class SearchType(Enum):
     IMAGE = 'image'
     PROMPT = 'prompt'
+
 
 # Define the collection schema for image embeddings
 image_fields = [
@@ -94,8 +95,10 @@ utility.wait_for_loading_complete(prompt_collection_name)
 feature_extractor = ViTFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
 image_model = ViTModel.from_pretrained('google/vit-base-patch16-224')
 
+
 # Function to convert image to vector
 def image_to_vector(image_url):
+    print(f'GOGO {image_url}')
     response = requests.get(image_url)
     image = Image.open(BytesIO(response.content))
     # Apply feature extractor to the image
@@ -108,18 +111,23 @@ def image_to_vector(image_url):
     print("shape of features:", features.shape)
     return features.squeeze(0).cpu().numpy()
 
+
 text_model = SentenceTransformer('multi-qa-MiniLM-L6-cos-v1')
+
+
 # Function to convert prompt to vector
 def prompt_to_vector(prompt_text):
     vector = text_model.encode(prompt_text)
     print("shape of vector:", vector.shape)
     return vector
 
+
 # Function to generate a unique ID (this is just a placeholder, you need to implement your own ID generation logic)
 def generate_unique_id():
     # Implement a method to generate a unique ID
     # This could be a simple increment, a UUID, a timestamp, or any other method that guarantees uniqueness
     return int(time.time() * 1000)  # Example using a timestamp
+
 
 # Insert an image and its prompt into Milvus with the same ID
 def insert_image_and_prompt(image_url, prompt_text):
@@ -129,6 +137,7 @@ def insert_image_and_prompt(image_url, prompt_text):
     image_mr = image_collection.insert([{"id": unique_id, "image_url": image_url, "image_embedding": image_vector}])
     prompt_mr = prompt_collection.insert([{"id": unique_id, "prompt_text": prompt_text, "prompt_embedding": prompt_vector}])
     return unique_id  # Return the common ID of the inserted vectors
+
 
 # Search for similar images or prompts
 def search(query, top_k=5, search_by=SearchType.IMAGE):
@@ -143,8 +152,11 @@ def search(query, top_k=5, search_by=SearchType.IMAGE):
     
     return results
 
+
 # Function to find similar image URLs from the database and their matching prompts
 def find_similar_images_by_image(image_url, top_k=5):
+    print('GOGO')
+    print(image_url)
     query_vector = image_to_vector(image_url)
     results = image_collection.search([query_vector], "image_embedding", {"metric_type": "L2", "params": {"nprobe": 16}}, top_k, "id > 0")
     
@@ -169,6 +181,7 @@ def find_similar_images_by_image(image_url, top_k=5):
         similar_images_with_prompts.append(combined_info)
         
     return similar_images_with_prompts
+
 
 # Function to find similar images based on a prompt
 def find_similar_images_by_prompt(prompt_text, top_k=5):
