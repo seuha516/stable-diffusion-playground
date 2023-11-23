@@ -118,11 +118,11 @@ def set_image():
 
 @app.route(f'/similar/image/<image_filename>', methods=['GET'])
 def similar_image(image_filename):
-    return milvus.find_similar_images_by_image(f'{const.SERVEL_URL}{const.IMAGE_API_PATH}/{image_filename}')
+    return milvus.find_similar_images_by_image(f'{"http://localhost:8000"}{const.IMAGE_API_PATH}/{image_filename}', 10)
 
 @app.route(f'/similar/prompt/<prompt>', methods=['GET'])
 def similar_prompt(prompt):
-    return milvus.find_similar_images_by_prompt(prompt)
+    return milvus.find_similar_images_by_prompt(prompt, 10)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=8000, allow_unsafe_werkzeug=True)
