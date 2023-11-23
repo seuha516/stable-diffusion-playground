@@ -8,11 +8,16 @@ import SimilarImages from "../../component/output/similar-images/similar-images"
 export default function OutputWrapper() {
   const {
     input: { num_inference_steps },
-    output: { images, similarImages, process },
+    output: {
+      images,
+      similarImagesByPrompt,
+      similarImagesByImage,
+      process,
+      isStopped,
+    },
   } = useContext(Context);
 
-  const isReadyForGenerate =
-    process === null && images === null && similarImages === null;
+  const isReadyForGenerate = process === null && images === null;
 
   return (
     <div className={classes.Container}>
@@ -32,7 +37,11 @@ export default function OutputWrapper() {
       )}
 
       {process !== null && (
-        <Loading current={process} num_inference_steps={num_inference_steps} />
+        <Loading
+          current={process}
+          num_inference_steps={num_inference_steps}
+          isStopped={isStopped}
+        />
       )}
 
       {images !== null && <OutputImages images={images} />}
