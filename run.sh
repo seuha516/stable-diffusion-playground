@@ -10,18 +10,14 @@ for arg in "$@"; do
   fi
 done
 
-(
-  cd ./frontend
-  docker-compose --project-directory . -f docker-compose.yml up
-) &
+cd ./frontend
+docker-compose up -d
 
-(
-  cd ./backend
-  if nvidia-smi &> /dev/null; then
-    echo "GPU detected. Running with GPU support."
-    DOCKER_VOLUME_DIRECTORY=. docker-compose --project-directory . -f docker/gpu/docker-compose.yml up $BUILD_FLAG
-  else
-    echo "No GPU detected. Running without GPU support."
-    DOCKER_VOLUME_DIRECTORY=. docker-compose --project-directory . -f docker/nogpu/docker-compose.yml up $BUILD_FLAG
-  fi
-)
+cd ../backend
+if nvidia-smi &> /dev/null; then
+  echo "GPU detected. Running with GPU support."
+  DOCKER_VOLUME_DIRECTORY=. docker-compose --project-directory . -f docker/gpu/docker-compose.yml up $BUILD_FLAG
+else
+  echo "No GPU detected. Running without GPU support."
+  DOCKER_VOLUME_DIRECTORY=. docker-compose --project-directory . -f docker/nogpu/docker-compose.yml up $BUILD_FLAG
+fi
