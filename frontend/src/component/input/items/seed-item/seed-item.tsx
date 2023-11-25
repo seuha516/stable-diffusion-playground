@@ -7,7 +7,7 @@ import { Context } from "../../../../view/const";
 
 export default function SeedItem({ title, value, onChange }: SeedItemProps) {
   const { output } = useContext(Context);
-  const disabled = output.process !== null;
+  const disabled = output.process !== null && !output.isStopped;
 
   const [input, setInput] = useState<string>((value ?? "").toString());
 

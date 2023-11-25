@@ -25,8 +25,10 @@ export const initialInput: InputType = {
 
 export const initialOutput: OutputType = {
   images: null,
-  similarImages: null,
+  similarImagesByPrompt: null,
+  similarImagesByImage: null,
   process: null,
+  isStopped: false,
 };
 
 export const imageSizeOptions: { value: ImageSize }[] = [

@@ -9,7 +9,6 @@ import config
 import const
 import util
 import milvus
-from pymilvus import connections
 # import storage
 
 app = Flask(__name__)
@@ -92,10 +91,32 @@ def socket_request(message):
             socketio=socketio,
             room=room
         )
+
+    elif message['type'] == 'similar_by_prompt':
+        prompt = body.get('prompt', '')
+        similar_result = milvus.find_similar_images_by_prompt(prompt, 10)
+
+        image_urls = []
+        for item in similar_result:
+            image_urls.append(item.get('image_url'))
+
+        socketio.emit('similar_by_prompt', {"images": image_urls}, room=room)
+
+    elif message['type'] == 'similar_by_image':
+        image_url = body.get('image', '')
+        similar_result = milvus.find_similar_images_by_image(image_url, 10)
+
+        image_urls = []
+        for item in similar_result:
+            image_urls.append(item.get('image_url'))
+
+        socketio.emit('similar_by_image', {"images": image_urls}, room=room)
+
     elif message['type'] == 'stop':
         with set_lock:
             if room in predicting_rooms:
                 predicting_rooms.remove(room)
+
     else:
         print('Not found')
 
@@ -116,13 +137,16 @@ def set_image():
 
     return image_name
 
+
 @app.route(f'/similar/image/<image_filename>', methods=['GET'])
 def similar_image(image_filename):
-    return milvus.find_similar_images_by_image(f'{"http://localhost:8000"}{const.IMAGE_API_PATH}/{image_filename}', 10)
+    return milvus.find_similar_images_by_image(f'{const.SERVER_URL}{const.IMAGE_API_PATH}/{image_filename}', 10)
+
 
 @app.route(f'/similar/prompt/<prompt>', methods=['GET'])
 def similar_prompt(prompt):
     return milvus.find_similar_images_by_prompt(prompt, 10)
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=8000, allow_unsafe_werkzeug=True)

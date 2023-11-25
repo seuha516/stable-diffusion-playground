@@ -20,7 +20,7 @@ const getBase64 = (file?: File): Promise<string | null> =>
 
 export default function ImageItem({ title, value, onChange }: ImageItemProps) {
   const { output } = useContext(Context);
-  const disabled = output.process !== null;
+  const disabled = output.process !== null && !output.isStopped;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);

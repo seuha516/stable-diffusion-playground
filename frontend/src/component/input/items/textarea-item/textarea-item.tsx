@@ -12,7 +12,7 @@ export default function TextAreaItem({
   onChange,
 }: TextAreaItemProps) {
   const { output } = useContext(Context);
-  const disabled = output.process !== null;
+  const disabled = output.process !== null && !output.isStopped;
 
   return (
     <ItemWrapper title={title}>

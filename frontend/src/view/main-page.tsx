@@ -9,13 +9,15 @@ import classes from "./main-page.module.scss";
 import { InputType, Mode, OutputType } from "./model";
 import OutputWrapper from "./output-wrapper/output-wrapper";
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL ?? "http://localhost:8000";
+const SERVER_URL = process.env.REACT_APP_SERVER_URL ?? "https://localhost";
 const socket = io(SERVER_URL);
 
 function MainPage() {
   const [mode, setMode] = useState<Mode>("txt2img");
   const [input, setInput] = useState<InputType>(initialInput);
   const [output, setOutput] = useState<OutputType>(initialOutput);
+
+  const isReadyForGenerate = output.process === null || output.isStopped;
 
   useEffect(() => {
     socket.on("message", (message: any) => {
@@ -24,22 +26,47 @@ function MainPage() {
     socket.on("intermediate_data", (data: any) => {
       console.log(data);
       setOutput({
+        ...initialOutput,
         images: data.images,
-        similarImages: [],
         process: data.process,
       });
     });
     socket.on("final_data", (data: any) => {
       console.log(data);
       setOutput({
+        ...initialOutput,
         images: data.images,
-        similarImages: [],
         process: null,
       });
+      socket.emit("request", {
+        type: "similar_by_prompt",
+        body: { prompt: input.prompt },
+      });
+      socket.emit("request", {
+        type: "similar_by_image",
+        body: { image: data.images[0] },
+      });
+    });
+    socket.on("similar_by_prompt", (data: any) => {
+      console.log(data);
+      setOutput((prev) => ({
+        ...prev,
+        similarImagesByPrompt: data.images,
+      }));
+    });
+    socket.on("similar_by_image", (data: any) => {
+      console.log(data);
+      setOutput((prev) => ({
+        ...prev,
+        similarImagesByImage: data.images,
+      }));
     });
     socket.on("stop", () => {
       console.log("stop");
-      setOutput(initialOutput);
+      setOutput((prev) => ({
+        ...prev,
+        isStopped: true,
+      }));
     });
   }, []);
 
@@ -69,7 +96,7 @@ function MainPage() {
     }
 
     window.scrollTo(0, 0);
-    setOutput({ ...initialOutput, process: 0 });
+    setOutput({ ...initialOutput, process: 0, isStopped: false });
 
     socket.emit("request", { type: "prediction", body: jsonData });
   };
@@ -90,7 +117,7 @@ function MainPage() {
         ]}
         activeKey={mode}
         onChange={(newMode) => {
-          if (output.process !== null) return;
+          if (output.process !== null && !output.isStopped) return;
           setMode(newMode as Mode);
         }}
       />
@@ -100,7 +127,7 @@ function MainPage() {
           <div className={classes.InputWrapper}>
             <InputWrapper />
 
-            {output.process === null ? (
+            {isReadyForGenerate ? (
               <Button
                 className={classes.InputButton}
                 type="primary"

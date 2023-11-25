@@ -12,7 +12,7 @@ export default function SelectItem<T>({
   options,
 }: SelectItemProps<T>) {
   const { output } = useContext(Context);
-  const disabled = output.process !== null;
+  const disabled = output.process !== null && !output.isStopped;
 
   return (
     <ItemWrapper title={title}>

@@ -4,13 +4,24 @@
   color: #005dde;
   font-size: 1.125rem;
 
-  .LoadingIcon svg {
-    fill: #005dde;
+  &.Stopped {
+    color: red;
+  }
+
+  .LoadingIcon {
+    margin-right: 0.5rem;
+
+    svg {
+      fill: #005dde;
+    }
   }
 
   .LoadingText {
-    margin: 0 0.5rem;
     font-weight: 500;
+  }
+
+  .StepsNumber {
+    margin-left: 0.5rem;
   }
 
   .StepsText {
