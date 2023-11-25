@@ -38,8 +38,13 @@ export type InputType = {
 
 export type OutputType = {
   images: string[] | null;
-  similarImagesByPrompt: string[] | null;
-  similarImagesByImage: string[] | null;
+  similarImagesByPrompt: SimilarImage[] | null;
+  similarImagesByImage: SimilarImage[] | null;
   process: number | null;
   isStopped: boolean;
+};
+
+export type SimilarImage = {
+  url: string;
+  prompt: string;
 };
