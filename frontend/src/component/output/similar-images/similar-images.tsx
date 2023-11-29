@@ -9,7 +9,12 @@ export default function SimilarImages({ text, images }: SimilarImagesProps) {
 
       <div className={classes.ImageWrapper}>
         {images.map((image, index) => (
-          <ImageButton key={index} size="small" src={image} />
+          <ImageButton
+            key={index}
+            size="small"
+            src={image.url}
+            prompt={image.prompt}
+          />
         ))}
         {images.length === 0 && <span>(No images)</span>}
       </div>
