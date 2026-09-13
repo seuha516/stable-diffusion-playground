@@ -1,7 +1,10 @@
+import os
+
+
 class Config(object):
     DEBUG = False
     TESTING = False
-    SECRET_KEY = "secret"
+    SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
 
 
 class ProductionConfig(Config):
